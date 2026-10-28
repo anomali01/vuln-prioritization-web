@@ -1,0 +1,279 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "project_manifest": {
+    "system_name": "Vulnerability Risk Prioritization System (CVSS · EPSS · CISA KEV)",
+    "system_name_id": "Sistem Prioritisasi Kerentanan Berbasis Risiko",
+    "version": "1.0.0",
+    "domain": "Cybersecurity / Vulnerability Management / Multi-Criteria Decision Making (MCDM)",
+    "repository_url": "https://github.com/anomali01/vuln-prioritization-web",
+    "production_deployment_url": "https://vuln-prioritization-web.vercel.app/",
+    "deployment_platform": "Vercel Serverless WSGI (Python Flask)",
+    "database_type": "Cloud MySQL 8.x (Host: um2o12.h.filess.io:61002)"
+  },
+  "runtime_and_dependencies": {
+    "language": "Python 3.14",
+    "web_framework": "Flask 3.1.x",
+    "application_server": "Gunicorn / Vercel WSGI Handler",
+    "data_libraries": [
+      "numpy",
+      "pandas",
+      "scipy",
+      "scikit-learn"
+    ],
+    "database_connector": "mysql-connector-python (with pooling, pool_size=5)",
+    "http_client": "requests",
+    "frontend_tech": {
+      "css_framework": "Tailwind CSS v3 (via CDN)",
+      "charting_engine": "Chart.js v4",
+      "icon_pack": "FontAwesome 6.4",
+      "typography": ["Plus Jakarta Sans", "JetBrains Mono"]
+    }
+  },
+  "database_schema": {
+    "tables": {
+      "vulnerabilities": {
+        "description": "Stores raw and cached threat intelligence metrics per CVE identifier",
+        "primary_key": "cve_id",
+        "columns": {
+          "cve_id": { "type": "VARCHAR(30)", "nullable": false },
+          "description": { "type": "TEXT", "nullable": true },
+          "cvss_v3_score": { "type": "FLOAT", "nullable": true, "range": [0.0, 10.0] },
+          "cvss_v3_severity": { "type": "VARCHAR(20)", "nullable": true, "enum": ["CRITICAL", "HIGH", "MEDIUM", "LOW", "NONE"] },
+          "cvss_vector": { "type": "VARCHAR(150)", "nullable": true },
+          "epss_score": { "type": "FLOAT", "nullable": true, "range": [0.0, 1.0] },
+          "epss_percentile": { "type": "FLOAT", "nullable": true, "range": [0.0, 1.0] },
+          "is_kev": { "type": "TINYINT(1)", "nullable": false, "enum": [0, 1] },
+          "kev_date_added": { "type": "VARCHAR(30)", "nullable": true, "format": "YYYY-MM-DD" },
+          "kev_due_date": { "type": "VARCHAR(30)", "nullable": true, "format": "YYYY-MM-DD" },
+          "kev_ransomware_use": { "type": "VARCHAR(50)", "nullable": true },
+          "last_updated": { "type": "TIMESTAMP", "default": "CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP" }
+        },
+        "caching_strategy": "Record valid for 24 hours. If older or missing, query NVD, EPSS, and CISA KEV APIs."
+      },
+      "prioritization_runs": {
+        "description": "Audit log of execution sessions containing experiment configuration",
+        "primary_key": "run_id",
+        "columns": {
+          "run_id": { "type": "INT AUTO_INCREMENT", "nullable": false },
+          "scenario": { "type": "INT", "nullable": false, "enum": [1, 2, 3] },
+          "weight_config": { "type": "INT", "nullable": false, "enum": [1, 2, 3] },
+          "created_at": { "type": "TIMESTAMP", "default": "CURRENT_TIMESTAMP" }
+        }
+      },
+      "prioritization_results": {
+        "description": "Computed priority rankings and scores per CVE for a specific run",
+        "primary_key": "id",
+        "foreign_keys": {
+          "run_id": "prioritization_runs(run_id) ON DELETE CASCADE",
+          "cve_id": "vulnerabilities(cve_id)"
+        },
+        "columns": {
+          "id": { "type": "INT AUTO_INCREMENT", "nullable": false },
+          "run_id": { "type": "INT", "nullable": false },
+          "cve_id": { "type": "VARCHAR(30)", "nullable": false },
+          "cvss_norm": { "type": "FLOAT", "nullable": false, "range": [0.0, 1.0] },
+          "epss_norm": { "type": "FLOAT", "nullable": false, "range": [0.0, 1.0] },
+          "kev_flag": { "type": "INT", "nullable": false, "enum": [0, 1] },
+          "weighted_score": { "type": "FLOAT", "nullable": false, "range": [0.0, 100.0] },
+          "rule_based_score": { "type": "FLOAT", "nullable": false, "range": [0.0, 100.0] },
+          "topsis_score": { "type": "FLOAT", "nullable": false, "range": [0.0, 100.0] },
+          "final_rank_weighted": { "type": "INT", "nullable": false, "min": 1 },
+          "final_rank_topsis": { "type": "INT", "nullable": false, "min": 1 },
+          "priority_category": { "type": "VARCHAR(20)", "nullable": false, "enum": ["Critical", "High", "Medium", "Low"] },
+          "explainability_text": { "type": "TEXT", "nullable": false }
+        }
+      }
+    }
+  },
+  "external_integrations": {
+    "nvd_api": {
+      "endpoint": "https://services.nvd.nist.gov/rest/json/cves/2.0?cveId={cve_id}",
+      "purpose": "Extract CVSS v3.1 base score, severity string, and vector",
+      "auth_header": "apiKey: {NVD_API_KEY}"
+    },
+    "epss_api": {
+      "endpoint_latest": "https://api.first.org/data/v1/epss?cve={cve_id}",
+      "endpoint_historical": "https://api.first.org/data/v1/epss?cve={cve_id}&date={YYYY-MM-DD}",
+      "purpose": "Extract current exploit prediction probability and historical pre-KEV score"
+    },
+    "cisa_kev_catalog": {
+      "endpoint": "https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json",
+      "purpose": "Match active in-the-wild exploitation status, date added, and ransomware campaign flag"
+    }
+  },
+  "prioritization_algorithm_specification": {
+    "normalization": {
+      "cvss_norm": "cvss_v3_score / 10.0",
+      "epss_norm": "epss_score (already in 0.0 - 1.0)",
+      "kev_flag": "1.0 if is_kev == 1 else 0.0"
+    },
+    "scenarios": {
+      "1": { "name": "CVSS Only", "features": ["cvss"] },
+      "2": { "name": "CVSS + EPSS", "features": ["cvss", "epss"] },
+      "3": { "name": "CVSS + EPSS + KEV", "features": ["cvss", "epss", "kev"], "recommended": true }
+    },
+    "weight_configurations": {
+      "1": { "raw": [0.50, 0.30, 0.20], "label": "Balanced (50:30:20)" },
+      "2": { "raw": [0.30, 0.40, 0.30], "label": "Dynamic Exploit Focus (30:40:30)" },
+      "3": { "raw": [0.20, 0.40, 0.40], "label": "Active Threat Focus (20:40:40)" }
+    },
+    "weight_redistribution_policy": "If scenario excludes a feature, its weight is redistributed proportionally among active features to preserve sum(weights) == 1.0",
+    "primary_method": {
+      "name": "Weighted Risk Scoring + Rule-Based Escalation",
+      "linear_formula": "weighted_score = (w_cvss * cvss_norm + w_epss * epss_norm + w_kev * kev_flag) * 100",
+      "rule_based_escalation": {
+        "condition": "is_kev == 1 and weighted_score < 85.0",
+        "action": "rule_based_score = max(weighted_score, 85.0 + epss_norm * 10.0)",
+        "scientific_rationale": "Prevents false-negative downgrade caused by EPSS statistical decay or prediction lag on confirmed actively exploited threats."
+      }
+    },
+    "benchmark_method": {
+      "name": "MCDM TOPSIS (Technique for Order Preference by Similarity to Ideal Solution)",
+      "steps": [
+        "1. Decision Matrix X (m rows: CVEs, n columns: normalized metrics)",
+        "2. Vector Normalization: r_ij = x_ij / sqrt(sum_i(x_ij^2))",
+        "3. Weighted Normalized Matrix: v_ij = w_j * r_ij",
+        "4. Determine Positive Ideal Solution A+ (max v_j) and Negative Ideal Solution A- (min v_j)",
+        "5. Calculate Euclidean Distances: D_i+ = sqrt(sum((v_ij - A_j+)^2)) and D_i- = sqrt(sum((v_ij - A_j-)^2))",
+        "6. Calculate Closeness Coefficient: C_i = D_i- / (D_i+ + D_i-)",
+        "7. Final TOPSIS Score: C_i * 100, ranked descending"
+      ]
+    },
+    "category_classification": {
+      "Critical": "Score >= 80.0",
+      "High": "60.0 <= Score < 80.0",
+      "Medium": "40.0 <= Score < 60.0",
+      "Low": "Score < 40.0"
+    }
+  },
+  "evaluation_suite_specification": {
+    "test_1_baseline_displacement": {
+      "metrics": ["mean_rank_displacement", "top10_overlap", "top10_overlap_pct"],
+      "description": "Calculates the average positional delta |Rank_Primary - Rank_TOPSIS| and Top-10 set intersection."
+    },
+    "test_2_kev_recall": {
+      "cutoffs": [10, 20, 50],
+      "formula": "Recall@K = (Number of KEVs in Top-K) / Total KEVs",
+      "models_compared": ["Proposed Method", "TOPSIS", "CVSS-Only Baseline"]
+    },
+    "test_3_precision_at_k": {
+      "cutoffs": [10, 20, 50],
+      "formula": "Precision@K = (Number of KEVs in Top-K) / K",
+      "models_compared": ["Proposed Method", "TOPSIS", "CVSS-Only Baseline"]
+    },
+    "test_4_historical_backtesting": {
+      "description": "Evaluates proactive detection by querying historical EPSS 14 days prior to CISA KEV publication date.",
+      "metric": "proactive_detection_rate_pct = (KEVs classified as Critical/High pre-announcement) / Total KEVs * 100"
+    },
+    "test_5_ranking_quality": {
+      "metrics": [
+        "NDCG@10",
+        "NDCG@20",
+        "NDCG@50",
+        "MRR (Mean Reciprocal Rank: 1 / rank_of_first_kev)",
+        "Average Rank of KEV items"
+      ]
+    },
+    "test_6_ablation_testing": {
+      "description": "Stepwise comparison of Scenario 1 (CVSS), Scenario 2 (+EPSS), and Scenario 3 (+KEV) on Recall@20, Precision@20, and Average KEV Rank."
+    },
+    "test_7_sensitivity_testing": {
+      "description": "Calculates pairwise Spearman rank correlation across Weight Config 1, Config 2, and Config 3."
+    },
+    "test_8_priority_consistency": {
+      "metric": "Spearman rank correlation coefficient (rho) and p-value between Primary Method and TOPSIS rankings."
+    },
+    "test_9_capacity_remediation_simulation": {
+      "slots": [10, 20, 50],
+      "description": "Simulates risk reduction efficiency when security teams have strict patch capacity limits vs Random and CVSS baselines."
+    },
+    "test_10_end_to_end_validation": {
+      "checks": [
+        "total_execution_time_sec",
+        "average_time_per_cve_ms",
+        "kev_protection_guarantee_100_percent_critical",
+        "database_integrity_and_schema_validation"
+      ]
+    }
+  },
+  "rest_api_specification": {
+    "endpoints": [
+      {
+        "path": "/api/health",
+        "method": "GET",
+        "description": "Returns database connectivity status and table record counts.",
+        "response_sample": {
+          "status": "healthy",
+          "database": "Connected",
+          "database_counts": {
+            "vulnerabilities": 60,
+            "prioritization_runs": 12,
+            "prioritization_results": 720
+          }
+        }
+      },
+      {
+        "path": "/api/sample-cves",
+        "method": "GET",
+        "description": "Returns 60 verified pre-cached CVE records (25 KEV + 35 Non-KEV).",
+        "response_sample": {
+          "status": "success",
+          "count": 60,
+          "cve_ids": ["CVE-2024-3400", "CVE-2024-21887"],
+          "data": [
+            {
+              "cve_id": "CVE-2024-3400",
+              "cvss_v3_score": 10.0,
+              "epss_score": 0.9421,
+              "is_kev": 1
+            }
+          ]
+        }
+      },
+      {
+        "path": "/api/fetch-cves",
+        "method": "POST",
+        "request_body": {
+          "cve_list": ["CVE-2024-3400", "CVE-2024-21887"]
+        },
+        "description": "Fetches intelligence from MySQL cache or queries NVD/EPSS/CISA external endpoints."
+      },
+      {
+        "path": "/api/prioritize",
+        "method": "POST",
+        "request_body": {
+          "vulnerabilities": [{"cve_id": "CVE-2024-3400", "cvss_v3_score": 10.0, "epss_score": 0.9421, "is_kev": 1}],
+          "scenario": 3,
+          "weight_config": 1
+        },
+        "description": "Calculates primary risk score, TOPSIS score, category, explainability text, and persists run to MySQL via batch insert."
+      },
+      {
+        "path": "/api/evaluate",
+        "method": "POST",
+        "request_body": {
+          "vulnerabilities": [{"cve_id": "CVE-2024-3400", "cvss_v3_score": 10.0, "epss_score": 0.9421, "is_kev": 1}],
+          "scenario": 3,
+          "weight_config": 1
+        },
+        "description": "Executes all 10 evaluation test schemes and returns comprehensive quantitative benchmarks."
+      },
+      {
+        "path": "/api/export-csv",
+        "method": "POST",
+        "request_body": {
+          "results": [{"cve_id": "CVE-2024-3400", "rule_based_score": 98.42}],
+          "filename": "results.csv"
+        },
+        "description": "Transforms JSON result array into downloadable CSV stream."
+      }
+    ]
+  },
+  "operational_instructions_for_agents": {
+    "local_execution": "Run 'python run.py' or 'flask run --port=5000' within the activated virtual environment.",
+    "automated_test_suite": "Execute 'python test_app.py' to run unit tests verifying DB connectivity, prioritization engine, 10 evaluations, and REST routes.",
+    "database_seeding": "Execute 'python seed_db.py' or trigger POST /api/seed-database.",
+    "deployment_routine": "Commits pushed to branch 'main' on GitHub (https://github.com/anomali01/vuln-prioritization-web) trigger automated serverless build and deployment on Vercel.",
+    "critical_performance_note": "Cloud MySQL is hosted remotely. Individual row inserts cause WAN latency overhead. Always use 'cursor.executemany()' for bulk persistence."
+  }
+}
