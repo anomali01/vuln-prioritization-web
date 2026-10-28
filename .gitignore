@@ -1,0 +1,28 @@
+# Virtual Environment
+venv/
+env/
+ENV/
+
+# Python Cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Environment Variables & Secrets (CRITICAL)
+.env
+.env.local
+.env.*.local
+
+# Database / CSV output
+*.csv
+instance/
+*.sqlite3
+
+# Logs & Temporary Files
+*.log
+.system_generated/
+
+# IDE / Editor Files
+.vscode/
+.idea/

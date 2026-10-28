@@ -1,0 +1,21 @@
+services:
+  - type: web
+    name: prioritisasi-kerentanan-web
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn app:app
+    envVars:
+      - key: FLASK_SECRET_KEY
+        generateValue: true
+      - key: DB_HOST
+        value: um2o12.h.filess.io
+      - key: DB_PORT
+        value: "61002"
+      - key: DB_USER
+        value: vuln_prioritization_sectionoil
+      - key: DB_PASSWORD
+        sync: false
+      - key: DB_NAME
+        value: vuln_prioritization_sectionoil
+      - key: NVD_API_KEY
+        value: D9ED1C20-A4F4-4F13-90FF-E8B12C2356B8
