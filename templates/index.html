@@ -3,26 +3,33 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sistem Prioritisasi Kerentanan Berbasis Risiko | CVSS + EPSS + KEV</title>
+  <title>Sistem Prioritisasi Kerentanan Berbasis Risiko | CVSS · EPSS · KEV</title>
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Chart.js CDN -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <!-- Font Awesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <script>
     tailwind.config = {
       theme: {
         extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+          },
           colors: {
             brand: {
-              50: '#f0f7ff',
-              100: '#e0effe',
-              500: '#0284c7',
-              600: '#0369a1',
-              700: '#075985',
-              800: '#0c4a6e',
-              900: '#082f49',
+              50: '#f0f9ff',
+              100: '#e0f2fe',
+              500: '#0ea5e9',
+              600: '#0284c7',
+              700: '#0369a1',
+              800: '#075985',
+              900: '#0c4a6e',
             }
           }
         }
@@ -30,273 +37,274 @@
     }
   </script>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
     body {
       font-family: 'Plus Jakarta Sans', sans-serif;
     }
-    .badge-critical { background-color: #fee2e2; color: #991b1b; border: 1px solid #f87171; }
-    .badge-high { background-color: #ffedd5; color: #9a3412; border: 1px solid #fb923c; }
-    .badge-medium { background-color: #fef9c3; color: #854d0e; border: 1px solid #facc15; }
-    .badge-low { background-color: #dcfce7; color: #166534; border: 1px solid #4ade80; }
+    .badge-critical { background-color: #fef2f2; color: #b91c1c; border: 1px solid #fecaca; }
+    .badge-high { background-color: #fff7ed; color: #c2410c; border: 1px solid #fed7aa; }
+    .badge-medium { background-color: #fefce8; color: #a16207; border: 1px solid #fef08a; }
+    .badge-low { background-color: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0; }
   </style>
 </head>
-<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col">
+<body class="bg-slate-50/60 text-slate-800 min-h-screen flex flex-col antialiased selection:bg-sky-500 selection:text-white">
 
   <!-- Top Navigation Header -->
-  <header class="bg-gradient-to-r from-slate-900 via-sky-950 to-indigo-950 text-white shadow-xl sticky top-0 z-50">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-      <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-        <div>
-          <div class="flex items-center gap-3">
-            <span class="p-2.5 bg-sky-500/20 text-sky-400 rounded-xl border border-sky-400/30">
-              <i class="fa-solid fa-shield-halved text-2xl"></i>
-            </span>
-            <div>
-              <h1 class="text-xl md:text-2xl font-bold tracking-tight text-white flex items-center gap-2">
+  <header class="bg-slate-900 border-b border-slate-800 sticky top-0 z-50 shadow-md">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex flex-col md:flex-row md:items-center md:justify-between py-4 gap-4">
+        
+        <!-- Logo & Title -->
+        <div class="flex items-center gap-3.5">
+          <div class="w-11 h-11 rounded-xl bg-gradient-to-tr from-sky-500 to-indigo-600 flex items-center justify-center text-white shadow-lg shadow-sky-500/20 ring-1 ring-white/20">
+            <i class="fa-solid fa-shield-halved text-xl"></i>
+          </div>
+          <div>
+            <div class="flex items-center gap-2.5">
+              <h1 class="text-lg md:text-xl font-bold tracking-tight text-white">
                 Prioritisasi Kerentanan Berbasis Risiko
-                <span class="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-sky-500/30 text-sky-300 border border-sky-400/30">v1.0 Skripsi</span>
               </h1>
-              <p class="text-xs md:text-sm text-slate-300">
-                Integrasi Dinamis Tri-Dimensi: <span class="text-sky-300 font-medium">CVSS v3.1</span> (Dampak Teknis) + <span class="text-emerald-300 font-medium">FIRST EPSS</span> (Probabilitas) + <span class="text-rose-300 font-medium">CISA KEV</span> (Eksploitasi Aktif)
-              </p>
+              <span class="text-[11px] font-semibold px-2 py-0.5 rounded-md bg-sky-500/10 text-sky-400 border border-sky-400/20">
+                Sistem Terpadu
+              </span>
             </div>
+            <p class="text-xs text-slate-400 mt-0.5">
+              Penilaian risiko terpadu berbasis <span class="text-sky-300 font-medium">CVSS v3.1</span> (Dampak), <span class="text-emerald-300 font-medium">FIRST EPSS</span> (Probabilitas), dan <span class="text-rose-300 font-medium">CISA KEV</span> (Eksploitasi Aktif).
+            </p>
           </div>
         </div>
 
-        <div class="flex items-center gap-3 self-end md:self-center">
-          <div id="dbStatusBadge" class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-800/80 border border-slate-700 text-xs">
-            <span class="w-2.5 h-2.5 rounded-full bg-amber-400 animate-pulse" id="dbStatusDot"></span>
-            <span class="text-slate-300" id="dbStatusText">Cloud MySQL: Menghubungkan...</span>
+        <!-- Right Side: DB Status & Quick Sample Button -->
+        <div class="flex items-center gap-2.5 self-start md:self-auto">
+          <div id="dbStatusBadge" class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-800/90 border border-slate-700/80 text-xs text-slate-300">
+            <span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse" id="dbStatusDot"></span>
+            <span id="dbStatusText">Cloud MySQL: Menghubungkan...</span>
           </div>
-          <button onclick="seedDatabaseDirectly()" class="px-3 py-1.5 rounded-lg bg-indigo-600/80 hover:bg-indigo-600 border border-indigo-400/30 text-xs font-medium text-white transition flex items-center gap-1.5">
-            <i class="fa-solid fa-cloud-arrow-up"></i>
-            <span>Seed DB (60 CVE)</span>
+          <button onclick="seedDatabaseDirectly()" title="Muat data sampel ke basis data" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-xs font-medium text-slate-200 hover:text-white transition flex items-center gap-1.5">
+            <i class="fa-solid fa-database text-sky-400"></i>
+            <span>Sinkron Data Sampel</span>
           </button>
         </div>
       </div>
 
       <!-- Navigation Tabs -->
-      <div class="flex border-b border-slate-800 mt-5 space-x-8 text-sm font-medium">
-        <button id="tabBtnAnalysis" onclick="switchTab('analysis')" class="pb-3 text-sky-400 border-b-2 border-sky-400 flex items-center gap-2">
-          <i class="fa-solid fa-chart-line"></i>
-          <span>Analisis & Pemeringkatan Prioritas</span>
+      <nav class="flex border-t border-slate-800/80 space-x-6 text-xs sm:text-sm font-semibold pt-1">
+        <button id="tabBtnAnalysis" onclick="switchTab('analysis')" class="py-3 text-sky-400 border-b-2 border-sky-400 flex items-center gap-2 transition">
+          <i class="fa-solid fa-layer-group"></i>
+          <span>Analisis & Prioritisasi</span>
         </button>
-        <button id="tabBtnLab" onclick="switchTab('lab')" class="pb-3 text-slate-400 hover:text-slate-200 flex items-center gap-2">
-          <i class="fa-solid fa-flask-vial"></i>
-          <span>Laboratorium 10 Pengujian Bab 4</span>
-          <span class="px-2 py-0.5 text-xs bg-indigo-500/20 text-indigo-300 rounded-full border border-indigo-400/30">10 Skema</span>
+        <button id="tabBtnLab" onclick="switchTab('lab')" class="py-3 text-slate-400 hover:text-slate-200 border-b-2 border-transparent flex items-center gap-2 transition">
+          <i class="fa-solid fa-chart-simple"></i>
+          <span>Evaluasi & Komparasi Kinerja</span>
         </button>
-      </div>
+      </nav>
     </div>
   </header>
 
   <!-- Main Container -->
-  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1 w-full">
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex-1 w-full space-y-6">
 
     <!-- ================================================================= -->
     <!-- TAB 1: ANALISIS & PEMERINGKATAN PRIORITAS -->
     <!-- ================================================================= -->
-    <div id="tabContentAnalysis" class="space-y-8">
+    <div id="tabContentAnalysis" class="space-y-6">
       
       <!-- Input Section Card -->
-      <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
-        <div class="border-b border-slate-100 pb-4 mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+      <div class="bg-white rounded-xl shadow-sm border border-slate-200/80 p-5 sm:p-6 transition">
+        <div class="border-b border-slate-100 pb-4 mb-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <div>
-            <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
-              <i class="fa-solid fa-list-check text-sky-600"></i>
-              <span>Konfigurasi Masukan Data Kerentanan (CVE)</span>
+            <h2 class="text-base sm:text-lg font-bold text-slate-900 flex items-center gap-2">
+              <i class="fa-solid fa-sliders text-sky-600"></i>
+              <span>Input & Konfigurasi Prioritisasi</span>
             </h2>
-            <p class="text-xs text-slate-500">Masukkan daftar CVE untuk dianalisis melalui REST API NVD, EPSS, dan CISA KEV.</p>
+            <p class="text-xs text-slate-500 mt-0.5">Masukkan daftar CVE dan pilih skenario perhitungan risiko.</p>
           </div>
           <div class="flex items-center gap-2">
-            <button onclick="loadSampleDataset()" class="px-3 py-1.5 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-200 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition">
-              <i class="fa-solid fa-database"></i>
-              <span>Load Sample Dataset (60 CVE)</span>
+            <button onclick="loadSampleDataset()" class="px-3 py-1.5 bg-sky-50 text-sky-700 hover:bg-sky-100 border border-sky-200 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition">
+              <i class="fa-solid fa-list-check"></i>
+              <span>Muat Sampel (60 CVE)</span>
             </button>
-            <button onclick="clearInput()" class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-lg text-xs font-medium transition">
-              <i class="fa-solid fa-trash-can"></i>
-              <span>Bersihkan</span>
+            <button onclick="clearInput()" class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-lg text-xs font-medium transition flex items-center gap-1.5">
+              <i class="fa-solid fa-arrow-rotate-left"></i>
+              <span>Reset</span>
             </button>
           </div>
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <!-- Kolom Input Textarea & File -->
-          <div class="lg:col-span-2 space-y-4">
-            <div>
-              <div class="flex justify-between items-center mb-1">
-                <label class="block text-xs font-semibold text-slate-700">Daftar Kode CVE (Satu per baris / pisahkan dengan koma):</label>
-                <span id="cveInputCount" class="text-xs font-medium text-slate-500">0 CVE terdeteksi</span>
-              </div>
-              <textarea id="cveInput" rows="6" oninput="updateCveCount()" placeholder="CVE-2024-3400&#10;CVE-2024-21887&#10;CVE-2023-46805&#10;CVE-2024-1709&#10;CVE-2024-6387" class="w-full text-xs font-mono p-3 bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-sky-500 focus:outline-none transition"></textarea>
+          <div class="lg:col-span-2 space-y-3">
+            <div class="flex justify-between items-center text-xs">
+              <label class="font-semibold text-slate-700">Daftar Kode CVE (satu per baris atau dipisah koma):</label>
+              <span id="cveInputCount" class="font-medium text-slate-500 bg-slate-100 px-2 py-0.5 rounded">0 CVE terdeteksi</span>
             </div>
+            <textarea id="cveInput" rows="6" oninput="updateCveCount()" placeholder="Contoh:&#10;CVE-2024-3400&#10;CVE-2024-21887&#10;CVE-2023-46805&#10;CVE-2024-1709&#10;CVE-2024-6387" class="w-full text-xs font-mono p-3 bg-slate-50/50 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:bg-white focus:outline-none transition leading-relaxed"></textarea>
 
-            <div class="flex flex-wrap items-center gap-4 text-xs">
-              <label class="cursor-pointer px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg font-medium border border-slate-300 flex items-center gap-2 transition">
-                <i class="fa-solid fa-file-arrow-up text-slate-500"></i>
-                <span>Upload File (.csv / .txt)</span>
+            <div class="flex flex-wrap items-center gap-3 text-xs">
+              <label class="cursor-pointer px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg font-medium border border-slate-200 flex items-center gap-2 transition">
+                <i class="fa-solid fa-upload text-slate-500"></i>
+                <span>Unggah File (.csv / .txt)</span>
                 <input type="file" id="cveFileInput" accept=".csv,.txt" onchange="handleFileUpload(event)" class="hidden">
               </label>
-              <span class="text-slate-400 italic">Format: daftar string CVE-YYYY-NNNN</span>
+              <span class="text-slate-400 text-[11px]">Format teks biasa berisi daftar format standar CVE-YYYY-NNNN</span>
             </div>
           </div>
 
-          <!-- Kolom Konfigurasi Eksperimen -->
-          <div class="bg-slate-50/70 border border-slate-200/80 rounded-xl p-4 space-y-5">
+          <!-- Kolom Konfigurasi Skenario & Bobot -->
+          <div class="bg-slate-50/80 border border-slate-200/90 rounded-xl p-4 space-y-4">
             <div>
-              <label class="block text-xs font-bold text-slate-800 uppercase tracking-wider mb-2">1. Skenario Eksperimen:</label>
-              <div class="space-y-2 text-xs">
-                <label class="flex items-start gap-2.5 p-2 rounded-lg bg-white border border-slate-200 hover:border-sky-400 cursor-pointer transition">
+              <label class="block text-xs font-bold text-slate-800 uppercase tracking-wider mb-2">Skenario Penilaian:</label>
+              <div class="space-y-1.5 text-xs">
+                <label class="flex items-start gap-2.5 p-2 rounded-lg bg-white border border-slate-200 hover:border-sky-300 cursor-pointer transition">
                   <input type="radio" name="scenarioOption" value="1" class="mt-0.5 text-sky-600 focus:ring-sky-500">
                   <div>
-                    <span class="font-bold text-slate-900">Skenario 1: CVSS Saja</span>
-                    <p class="text-[11px] text-slate-500">Hanya tingkat keparahan intrinsik teknis</p>
+                    <span class="font-bold text-slate-800">Skenario 1: CVSS Saja</span>
+                    <p class="text-[11px] text-slate-500">Hanya tingkat keparahan teknis bawaan</p>
                   </div>
                 </label>
-                <label class="flex items-start gap-2.5 p-2 rounded-lg bg-white border border-slate-200 hover:border-sky-400 cursor-pointer transition">
+                <label class="flex items-start gap-2.5 p-2 rounded-lg bg-white border border-slate-200 hover:border-sky-300 cursor-pointer transition">
                   <input type="radio" name="scenarioOption" value="2" class="mt-0.5 text-sky-600 focus:ring-sky-500">
                   <div>
-                    <span class="font-bold text-slate-900">Skenario 2: CVSS + EPSS</span>
+                    <span class="font-bold text-slate-800">Skenario 2: CVSS + EPSS</span>
                     <p class="text-[11px] text-slate-500">Kombinasi dampak teknis & probabilitas eksploitasi</p>
                   </div>
                 </label>
-                <label class="flex items-start gap-2.5 p-2 rounded-lg bg-white border-2 border-sky-500 bg-sky-50/30 cursor-pointer transition">
+                <label class="flex items-start gap-2.5 p-2 rounded-lg bg-white border-2 border-sky-500 bg-sky-50/40 cursor-pointer transition">
                   <input type="radio" name="scenarioOption" value="3" checked class="mt-0.5 text-sky-600 focus:ring-sky-500">
                   <div>
-                    <span class="font-bold text-sky-900">Skenario 3: CVSS + EPSS + KEV (Utama)</span>
-                    <p class="text-[11px] text-sky-700">Holistik 3-dimensi + Rule-based Critical Escalation</p>
+                    <span class="font-bold text-sky-900">Skenario 3: CVSS + EPSS + KEV (Rekomendasi)</span>
+                    <p class="text-[11px] text-sky-700">Analisis penuh dengan eskalasi kerentanan aktif</p>
                   </div>
                 </label>
               </div>
             </div>
 
             <div>
-              <label class="block text-xs font-bold text-slate-800 uppercase tracking-wider mb-2">2. Konfigurasi Bobot (CVSS:EPSS:KEV):</label>
-              <div class="grid grid-cols-3 gap-2 text-xs">
+              <label class="block text-xs font-bold text-slate-800 uppercase tracking-wider mb-2">Konfigurasi Bobot (CVSS : EPSS : KEV):</label>
+              <div class="grid grid-cols-3 gap-1.5 text-xs">
                 <label class="p-2 bg-white border border-slate-200 rounded-lg text-center cursor-pointer hover:border-sky-400 transition">
                   <input type="radio" name="weightOption" value="1" checked class="text-sky-600 focus:ring-sky-500">
-                  <span class="block font-bold text-slate-900 mt-1">50:30:20</span>
-                  <span class="text-[10px] text-slate-500">Config 1</span>
+                  <span class="block font-bold text-slate-800 mt-1">50:30:20</span>
+                  <span class="text-[10px] text-slate-500">Seimbang</span>
                 </label>
                 <label class="p-2 bg-white border border-slate-200 rounded-lg text-center cursor-pointer hover:border-sky-400 transition">
                   <input type="radio" name="weightOption" value="2" class="text-sky-600 focus:ring-sky-500">
-                  <span class="block font-bold text-slate-900 mt-1">30:40:30</span>
-                  <span class="text-[10px] text-slate-500">Config 2</span>
+                  <span class="block font-bold text-slate-800 mt-1">30:40:30</span>
+                  <span class="text-[10px] text-slate-500">Dinamis</span>
                 </label>
                 <label class="p-2 bg-white border border-slate-200 rounded-lg text-center cursor-pointer hover:border-sky-400 transition">
                   <input type="radio" name="weightOption" value="3" class="text-sky-600 focus:ring-sky-500">
-                  <span class="block font-bold text-slate-900 mt-1">20:40:40</span>
-                  <span class="text-[10px] text-slate-500">Config 3</span>
+                  <span class="block font-bold text-slate-800 mt-1">20:40:40</span>
+                  <span class="text-[10px] text-slate-500">Aktif</span>
                 </label>
               </div>
             </div>
 
             <!-- Tombol Eksekusi -->
-            <button id="btnRunPrioritization" onclick="runAnalysisProcess()" class="w-full py-3 bg-gradient-to-r from-sky-600 to-indigo-600 hover:from-sky-500 hover:to-indigo-500 text-white font-bold text-sm rounded-xl shadow-md hover:shadow-lg transition flex items-center justify-center gap-2">
-              <i class="fa-solid fa-play"></i>
-              <span>Jalankan Analisis Prioritisasi</span>
+            <button id="btnRunPrioritization" onclick="runAnalysisProcess()" class="w-full py-2.5 bg-sky-600 hover:bg-sky-500 text-white font-bold text-xs rounded-lg shadow-sm hover:shadow transition flex items-center justify-center gap-2">
+              <i class="fa-solid fa-bolt"></i>
+              <span>Jalankan Analisis Prioritas</span>
             </button>
           </div>
         </div>
       </div>
 
       <!-- Loading Progress Indicator (Hidden by default) -->
-      <div id="analysisProgress" class="hidden bg-white rounded-2xl shadow-sm border border-sky-100 p-6 text-center space-y-4">
-        <div class="inline-block animate-spin text-sky-600 text-3xl">
+      <div id="analysisProgress" class="hidden bg-white rounded-xl shadow-sm border border-sky-100 p-6 text-center space-y-3">
+        <div class="inline-block animate-spin text-sky-600 text-2xl">
           <i class="fa-solid fa-circle-notch"></i>
         </div>
         <div>
-          <h3 class="text-sm font-bold text-slate-800" id="progressStatusText">Menghubungi API Eksternal & Caching Cloud MySQL...</h3>
-          <p class="text-xs text-slate-500 mt-1">Mengecek cache NVD v2.0, FIRST EPSS, dan CISA KEV.</p>
+          <h3 class="text-sm font-bold text-slate-800" id="progressStatusText">Sinkronisasi data API eksternal & cache...</h3>
+          <p class="text-xs text-slate-500 mt-0.5">Memeriksa data NVD, EPSS, dan CISA KEV.</p>
         </div>
       </div>
 
       <!-- Result Section (Shown after analysis) -->
-      <div id="resultsContainer" class="hidden space-y-8">
+      <div id="resultsContainer" class="hidden space-y-6">
         
         <!-- Summary Cards Row -->
-        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-          <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
-            <span class="text-xs font-semibold text-slate-500">Total CVE</span>
-            <div class="text-2xl font-black text-slate-800 mt-1" id="statTotalCve">0</div>
-            <div class="text-[11px] text-slate-400 mt-0.5" id="statExecutionTime">0.00 detik</div>
+        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
+          <div class="bg-white p-4 rounded-xl border border-slate-200/90 shadow-sm">
+            <span class="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Total CVE</span>
+            <div class="text-2xl font-extrabold text-slate-800 mt-1" id="statTotalCve">0</div>
+            <div class="text-[11px] text-slate-400 mt-0.5" id="statExecutionTime">0.00 s</div>
           </div>
           <div class="bg-white p-4 rounded-xl border border-rose-200 shadow-sm">
-            <span class="text-xs font-semibold text-rose-600 flex items-center gap-1">
-              <i class="fa-solid fa-triangle-exclamation"></i>
+            <span class="text-[11px] font-semibold text-rose-600 uppercase tracking-wider flex items-center gap-1">
+              <i class="fa-solid fa-circle-exclamation text-xs"></i>
               <span>Critical (≥ 80)</span>
             </span>
-            <div class="text-2xl font-black text-rose-600 mt-1" id="statCritical">0</div>
+            <div class="text-2xl font-extrabold text-rose-600 mt-1" id="statCritical">0</div>
             <div class="text-[11px] text-rose-400 mt-0.5">Prioritas Tertinggi</div>
           </div>
           <div class="bg-white p-4 rounded-xl border border-orange-200 shadow-sm">
-            <span class="text-xs font-semibold text-orange-600 flex items-center gap-1">
-              <i class="fa-solid fa-circle-exclamation"></i>
+            <span class="text-[11px] font-semibold text-orange-600 uppercase tracking-wider flex items-center gap-1">
+              <i class="fa-solid fa-triangle-exclamation text-xs"></i>
               <span>High (60 - 79.9)</span>
             </span>
-            <div class="text-2xl font-black text-orange-600 mt-1" id="statHigh">0</div>
+            <div class="text-2xl font-extrabold text-orange-600 mt-1" id="statHigh">0</div>
             <div class="text-[11px] text-orange-400 mt-0.5">Penanganan Segera</div>
           </div>
           <div class="bg-white p-4 rounded-xl border border-amber-200 shadow-sm">
-            <span class="text-xs font-semibold text-amber-600 flex items-center gap-1">
-              <i class="fa-solid fa-circle-info"></i>
+            <span class="text-[11px] font-semibold text-amber-600 uppercase tracking-wider flex items-center gap-1">
+              <i class="fa-solid fa-clock text-xs"></i>
               <span>Medium (40 - 59.9)</span>
             </span>
-            <div class="text-2xl font-black text-amber-600 mt-1" id="statMedium">0</div>
-            <div class="text-[11px] text-amber-400 mt-0.5">Terjadwal</div>
+            <div class="text-2xl font-extrabold text-amber-600 mt-1" id="statMedium">0</div>
+            <div class="text-[11px] text-amber-400 mt-0.5">Perbaikan Terjadwal</div>
           </div>
           <div class="bg-white p-4 rounded-xl border border-emerald-200 shadow-sm">
-            <span class="text-xs font-semibold text-emerald-600 flex items-center gap-1">
-              <i class="fa-solid fa-circle-check"></i>
+            <span class="text-[11px] font-semibold text-emerald-600 uppercase tracking-wider flex items-center gap-1">
+              <i class="fa-solid fa-circle-check text-xs"></i>
               <span>Low (< 40)</span>
             </span>
-            <div class="text-2xl font-black text-emerald-600 mt-1" id="statLow">0</div>
-            <div class="text-[11px] text-emerald-400 mt-0.5">Rendah / Rutin</div>
+            <div class="text-2xl font-extrabold text-emerald-600 mt-1" id="statLow">0</div>
+            <div class="text-[11px] text-emerald-400 mt-0.5">Pemantauan Rutin</div>
           </div>
           <div class="bg-white p-4 rounded-xl border border-indigo-200 shadow-sm">
-            <span class="text-xs font-semibold text-indigo-600 flex items-center gap-1">
-              <i class="fa-solid fa-skull-crossbones"></i>
-              <span>KEV Terdeteksi</span>
+            <span class="text-[11px] font-semibold text-indigo-600 uppercase tracking-wider flex items-center gap-1">
+              <i class="fa-solid fa-skull-crossbones text-xs"></i>
+              <span>Aktif (KEV)</span>
             </span>
-            <div class="text-2xl font-black text-indigo-600 mt-1" id="statKevCount">0</div>
+            <div class="text-2xl font-extrabold text-indigo-600 mt-1" id="statKevCount">0</div>
             <div class="text-[11px] text-indigo-400 mt-0.5">Eksploitasi Aktif</div>
           </div>
         </div>
 
         <!-- Charts Row -->
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm flex flex-col items-center">
-            <h3 class="text-xs font-bold text-slate-800 uppercase tracking-wider mb-4 self-start">Distribusi Kategori Risiko</h3>
-            <div class="w-full max-w-[260px] h-[220px]">
+          <div class="bg-white rounded-xl p-5 border border-slate-200/90 shadow-sm flex flex-col items-center">
+            <h3 class="text-xs font-bold text-slate-700 uppercase tracking-wider mb-4 self-start">Distribusi Kategori Risiko</h3>
+            <div class="w-full max-w-[240px] h-[210px]">
               <canvas id="categoryChart"></canvas>
             </div>
           </div>
 
-          <div class="lg:col-span-2 bg-white rounded-2xl p-5 border border-slate-200 shadow-sm flex flex-col">
+          <div class="lg:col-span-2 bg-white rounded-xl p-5 border border-slate-200/90 shadow-sm flex flex-col">
             <div class="flex justify-between items-center mb-4">
-              <h3 class="text-xs font-bold text-slate-800 uppercase tracking-wider">Perbandingan Skor: Metode Utama (Rule-Based) vs TOPSIS (Top 15 CVE)</h3>
-              <span class="text-xs text-slate-400">Skor 0 - 100</span>
+              <h3 class="text-xs font-bold text-slate-700 uppercase tracking-wider">Perbandingan Skor: Metode Utama vs TOPSIS (Top 15 CVE)</h3>
+              <span class="text-[11px] text-slate-400">Skala 0 - 100</span>
             </div>
-            <div class="flex-1 w-full h-[220px]">
+            <div class="flex-1 w-full h-[210px]">
               <canvas id="scoresComparisonChart"></canvas>
             </div>
           </div>
         </div>
 
         <!-- Priority Ranking Table Card -->
-        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-          <div class="p-5 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200/90 overflow-hidden">
+          <div class="p-4 sm:p-5 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
             <div>
               <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
-                <i class="fa-solid fa-arrow-down-1-9 text-sky-600"></i>
-                <span>Tabel Hasil Pemeringkatan Prioritas Kerentanan</span>
+                <i class="fa-solid fa-arrow-down-wide-short text-sky-600"></i>
+                <span>Daftar Prioritas Kerentanan</span>
               </h3>
-              <p class="text-xs text-slate-500">Perbandingan komparatif peringkat Metode Utama (Weighted + Rule-Based) vs Metode Pembanding (TOPSIS).</p>
+              <p class="text-xs text-slate-500 mt-0.5">Urutan prioritas penanganan kerentanan berdasarkan integrasi risiko.</p>
             </div>
-            <div class="flex items-center gap-3">
-              <button onclick="exportMainResultsToCSV()" class="px-3.5 py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-lg text-xs font-semibold flex items-center gap-1.5 transition">
+            <div class="flex items-center gap-2">
+              <button onclick="exportMainResultsToCSV()" class="px-3 py-1.5 bg-slate-900 hover:bg-slate-800 text-white rounded-lg text-xs font-semibold flex items-center gap-1.5 transition">
                 <i class="fa-solid fa-file-csv text-emerald-400"></i>
-                <span>Export CSV Hasil</span>
+                <span>Ekspor CSV</span>
               </button>
             </div>
           </div>
@@ -304,21 +312,21 @@
           <div class="overflow-x-auto">
             <table class="w-full text-left border-collapse text-xs">
               <thead>
-                <tr class="bg-slate-50 border-b border-slate-200 text-slate-600 font-semibold uppercase tracking-wider">
-                  <th class="py-3 px-4 text-center">Rank (Utama)</th>
-                  <th class="py-3 px-4">Kode CVE</th>
-                  <th class="py-3 px-3 text-center">CVSS v3.1</th>
+                <tr class="bg-slate-50/80 border-b border-slate-200 text-slate-600 font-semibold uppercase tracking-wider text-[11px]">
+                  <th class="py-3 px-3 text-center">Rank</th>
+                  <th class="py-3 px-3">Kode CVE</th>
+                  <th class="py-3 px-3 text-center">CVSS v3</th>
                   <th class="py-3 px-3 text-center">EPSS Score</th>
                   <th class="py-3 px-3 text-center">Status KEV</th>
                   <th class="py-3 px-3 text-right">Skor Utama</th>
                   <th class="py-3 px-3 text-right">Skor TOPSIS</th>
                   <th class="py-3 px-3 text-center">Rank TOPSIS</th>
                   <th class="py-3 px-3 text-center">Kategori</th>
-                  <th class="py-3 px-4">Explainability (Alasan Prioritas)</th>
+                  <th class="py-3 px-4">Alasan Prioritas</th>
                 </tr>
               </thead>
               <tbody id="rankingTableBody" class="divide-y divide-slate-100">
-                <!-- Diisi via JS -->
+                <!-- Diisi via JavaScript -->
               </tbody>
             </table>
           </div>
@@ -328,70 +336,70 @@
     </div>
 
     <!-- ================================================================= -->
-    <!-- TAB 2: LABORATORIUM 10 PENGUJIAN BAB 4 -->
+    <!-- TAB 2: EVALUASI & KOMPARASI KINERJA SISTEM -->
     <!-- ================================================================= -->
-    <div id="tabContentLab" class="hidden space-y-8">
+    <div id="tabContentLab" class="hidden space-y-6">
       
       <!-- Top Action Bar -->
-      <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+      <div class="bg-white rounded-xl shadow-sm border border-slate-200/90 p-5 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
-          <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
-            <i class="fa-solid fa-microscope text-indigo-600"></i>
-            <span>Laboratorium 10 Skema Pengujian Evaluasi Skripsi (Bab 4)</span>
+          <h2 class="text-base sm:text-lg font-bold text-slate-900 flex items-center gap-2">
+            <i class="fa-solid fa-chart-line text-sky-600"></i>
+            <span>Evaluasi & Komparasi Kinerja Model</span>
           </h2>
-          <p class="text-xs text-slate-500">Seluruh pengujian dirancang untuk membuktikan validitas ilmiah, performa, dan keunggulan sistem prioritisasi.</p>
+          <p class="text-xs text-slate-500 mt-0.5">Metrik kuantitatif efektivitas perankingan, akurasi deteksi risiko, dan simulasi kapasitas remediasi.</p>
         </div>
-        <div class="flex items-center gap-3">
-          <button id="btnRunLabAll" onclick="runAllLabEvaluations()" class="px-5 py-2.5 bg-gradient-to-r from-indigo-600 to-sky-600 hover:from-indigo-500 hover:to-sky-500 text-white font-bold text-xs rounded-xl shadow-md transition flex items-center gap-2">
-            <i class="fa-solid fa-bolt"></i>
-            <span>Jalankan Semua 10 Pengujian</span>
+        <div class="flex items-center gap-2">
+          <button id="btnRunLabAll" onclick="runAllLabEvaluations()" class="px-4 py-2 bg-sky-600 hover:bg-sky-500 text-white font-bold text-xs rounded-lg shadow-sm transition flex items-center gap-2">
+            <i class="fa-solid fa-play"></i>
+            <span>Jalankan Semua Evaluasi</span>
           </button>
         </div>
       </div>
 
       <!-- Lab Loading Progress (Hidden by default) -->
-      <div id="labProgress" class="hidden bg-white rounded-2xl shadow-sm border border-indigo-100 p-6 text-center space-y-4">
-        <div class="inline-block animate-spin text-indigo-600 text-3xl">
+      <div id="labProgress" class="hidden bg-white rounded-xl shadow-sm border border-sky-100 p-6 text-center space-y-3">
+        <div class="inline-block animate-spin text-sky-600 text-2xl">
           <i class="fa-solid fa-circle-notch"></i>
         </div>
         <div>
-          <h3 class="text-sm font-bold text-slate-800">Menghitung 10 Skema Pengujian Evaluasi...</h3>
-          <p class="text-xs text-slate-500 mt-1">Menjalankan simulasi matriks, Spearman correlation, NDCG, dan simulasi kapasitas penanganan.</p>
+          <h3 class="text-sm font-bold text-slate-800">Menghitung metrik evaluasi model...</h3>
+          <p class="text-xs text-slate-500 mt-0.5">Memproses korelasi Spearman, NDCG, deteksi historis, dan simulasi kapasitas.</p>
         </div>
       </div>
 
       <!-- Lab Results Container -->
-      <div id="labResultsContainer" class="space-y-8">
+      <div id="labResultsContainer" class="space-y-6">
 
         <!-- (1) Baseline Ranking Comparison -->
-        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-          <div class="p-5 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200/90 overflow-hidden">
+          <div class="p-4 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
             <div>
-              <span class="text-xs font-bold text-sky-600 uppercase tracking-wider">Skema 1</span>
-              <h3 class="text-base font-bold text-slate-900">Baseline Ranking Comparison</h3>
-              <p class="text-xs text-slate-500">Perbandingan pergeseran peringkat (displacement) antara Metode Utama dan TOPSIS.</p>
+              <span class="text-[10px] font-bold text-sky-600 uppercase tracking-wider">Pengujian 1</span>
+              <h3 class="text-sm font-bold text-slate-900">Perbandingan Pergeseran Peringkat (Displacement)</h3>
+              <p class="text-[11px] text-slate-500">Perbedaan urutan prioritas antara Metode Utama dan TOPSIS.</p>
             </div>
-            <button onclick="exportLabTestCSV('test1')" class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-medium transition flex items-center gap-1.5">
-              <i class="fa-solid fa-download"></i> Export CSV
+            <button onclick="exportLabTestCSV('test1')" class="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded text-xs font-medium transition flex items-center gap-1">
+              <i class="fa-solid fa-download text-[10px]"></i> CSV
             </button>
           </div>
-          <div class="p-5 grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <div class="space-y-4">
+          <div class="p-4 sm:p-5 grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div class="space-y-3">
               <div class="grid grid-cols-2 gap-3">
-                <div class="p-3 bg-sky-50 rounded-xl border border-sky-100">
-                  <span class="text-[11px] text-sky-700 font-semibold">Mean Rank Displacement</span>
-                  <div class="text-xl font-bold text-sky-900 mt-1" id="test1MeanDisp">-</div>
+                <div class="p-3 bg-sky-50 rounded-lg border border-sky-100">
+                  <span class="text-[10px] text-sky-700 font-semibold uppercase">Rata-rata Pergeseran</span>
+                  <div class="text-lg font-bold text-sky-900 mt-0.5" id="test1MeanDisp">-</div>
                 </div>
-                <div class="p-3 bg-indigo-50 rounded-xl border border-indigo-100">
-                  <span class="text-[11px] text-indigo-700 font-semibold">Top-10 Overlap</span>
-                  <div class="text-xl font-bold text-indigo-900 mt-1" id="test1Overlap10">-</div>
+                <div class="p-3 bg-indigo-50 rounded-lg border border-indigo-100">
+                  <span class="text-[10px] text-indigo-700 font-semibold uppercase">Irisan Top-10</span>
+                  <div class="text-lg font-bold text-indigo-900 mt-0.5" id="test1Overlap10">-</div>
                 </div>
               </div>
               <p class="text-xs text-slate-600 leading-relaxed" id="test1Desc">
-                Klik tombol "Jalankan Semua 10 Pengujian" di atas untuk memuat hasil komputasi pengujian ini.
+                Klik tombol "Jalankan Semua Evaluasi" di atas untuk memproses hasil perbandingan.
               </p>
             </div>
-            <div class="lg:col-span-2 h-[220px]">
+            <div class="lg:col-span-2 h-[200px]">
               <canvas id="chartTest1Displacement"></canvas>
             </div>
           </div>
@@ -400,29 +408,29 @@
         <!-- (2) & (3) KEV Recall & Precision@K Row -->
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <!-- (2) KEV Recall Testing -->
-          <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-            <div class="p-5 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
+          <div class="bg-white rounded-xl shadow-sm border border-slate-200/90 overflow-hidden">
+            <div class="p-4 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
               <div>
-                <span class="text-xs font-bold text-emerald-600 uppercase tracking-wider">Skema 2</span>
-                <h3 class="text-base font-bold text-slate-900">KEV Recall Testing</h3>
-                <p class="text-xs text-slate-500">Recall@10, Recall@20, dan Recall@50.</p>
+                <span class="text-[10px] font-bold text-emerald-600 uppercase tracking-wider">Pengujian 2</span>
+                <h3 class="text-sm font-bold text-slate-900">Recall Kerentanan Aktif (Recall@K)</h3>
+                <p class="text-[11px] text-slate-500">Tingkat keberhasilan menjaring kerentanan KEV pada Top-10, 20, dan 50.</p>
               </div>
-              <button onclick="exportLabTestCSV('test2')" class="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-medium transition">
-                <i class="fa-solid fa-download"></i> CSV
+              <button onclick="exportLabTestCSV('test2')" class="px-2 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded text-xs font-medium transition">
+                <i class="fa-solid fa-download text-[10px]"></i> CSV
               </button>
             </div>
-            <div class="p-5 space-y-4">
-              <div class="h-[200px]">
+            <div class="p-4 space-y-4">
+              <div class="h-[180px]">
                 <canvas id="chartTest2Recall"></canvas>
               </div>
               <div class="overflow-x-auto">
                 <table class="w-full text-xs text-left">
                   <thead>
-                    <tr class="border-b border-slate-200 text-slate-500 font-semibold">
-                      <th class="py-2">Threshold</th>
-                      <th class="py-2 text-center">Metode Utama</th>
-                      <th class="py-2 text-center">TOPSIS</th>
-                      <th class="py-2 text-center">CVSS Saja</th>
+                    <tr class="border-b border-slate-200 text-slate-500 font-semibold text-[11px]">
+                      <th class="py-1.5">Threshold</th>
+                      <th class="py-1.5 text-center">Metode Utama</th>
+                      <th class="py-1.5 text-center">TOPSIS</th>
+                      <th class="py-1.5 text-center">CVSS Saja</th>
                     </tr>
                   </thead>
                   <tbody id="test2TableBody" class="divide-y divide-slate-100">
@@ -434,29 +442,29 @@
           </div>
 
           <!-- (3) Precision@K Testing -->
-          <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-            <div class="p-5 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
+          <div class="bg-white rounded-xl shadow-sm border border-slate-200/90 overflow-hidden">
+            <div class="p-4 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
               <div>
-                <span class="text-xs font-bold text-amber-600 uppercase tracking-wider">Skema 3</span>
-                <h3 class="text-base font-bold text-slate-900">Precision@K Testing</h3>
-                <p class="text-xs text-slate-500">Precision@10, Precision@20, dan Precision@50.</p>
+                <span class="text-[10px] font-bold text-amber-600 uppercase tracking-wider">Pengujian 3</span>
+                <h3 class="text-sm font-bold text-slate-900">Presisi Deteksi (Precision@K)</h3>
+                <p class="text-[11px] text-slate-500">Proporsi kerentanan KEV dalam kelompok peringkat teratas.</p>
               </div>
-              <button onclick="exportLabTestCSV('test3')" class="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-medium transition">
-                <i class="fa-solid fa-download"></i> CSV
+              <button onclick="exportLabTestCSV('test3')" class="px-2 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded text-xs font-medium transition">
+                <i class="fa-solid fa-download text-[10px]"></i> CSV
               </button>
             </div>
-            <div class="p-5 space-y-4">
-              <div class="h-[200px]">
+            <div class="p-4 space-y-4">
+              <div class="h-[180px]">
                 <canvas id="chartTest3Precision"></canvas>
               </div>
               <div class="overflow-x-auto">
                 <table class="w-full text-xs text-left">
                   <thead>
-                    <tr class="border-b border-slate-200 text-slate-500 font-semibold">
-                      <th class="py-2">Threshold</th>
-                      <th class="py-2 text-center">Metode Utama</th>
-                      <th class="py-2 text-center">TOPSIS</th>
-                      <th class="py-2 text-center">CVSS Saja</th>
+                    <tr class="border-b border-slate-200 text-slate-500 font-semibold text-[11px]">
+                      <th class="py-1.5">Threshold</th>
+                      <th class="py-1.5 text-center">Metode Utama</th>
+                      <th class="py-1.5 text-center">TOPSIS</th>
+                      <th class="py-1.5 text-center">CVSS Saja</th>
                     </tr>
                   </thead>
                   <tbody id="test3TableBody" class="divide-y divide-slate-100">
@@ -469,36 +477,36 @@
         </div>
 
         <!-- (4) Historical Backtesting -->
-        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-          <div class="p-5 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200/90 overflow-hidden">
+          <div class="p-4 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
             <div>
-              <span class="text-xs font-bold text-indigo-600 uppercase tracking-wider">Skema 4</span>
-              <h3 class="text-base font-bold text-slate-900">Historical Backtesting (Pra-KEV)</h3>
-              <p class="text-xs text-slate-500">Membuktikan kemampuan deteksi dini sistem 14 hari sebelum CVE resmi diumumkan di katalog KEV CISA.</p>
+              <span class="text-[10px] font-bold text-indigo-600 uppercase tracking-wider">Pengujian 4</span>
+              <h3 class="text-sm font-bold text-slate-900">Deteksi Dini Historis (Pra-KEV)</h3>
+              <p class="text-[11px] text-slate-500">Simulasi kemampuan sistem mengidentifikasi risiko sebelum status eksploitasi aktif diumumkan CISA.</p>
             </div>
-            <button onclick="exportLabTestCSV('test4')" class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-medium transition flex items-center gap-1.5">
-              <i class="fa-solid fa-download"></i> Export CSV
+            <button onclick="exportLabTestCSV('test4')" class="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded text-xs font-medium transition flex items-center gap-1">
+              <i class="fa-solid fa-download text-[10px]"></i> CSV
             </button>
           </div>
-          <div class="p-5 space-y-4">
-            <div class="flex items-center gap-4 bg-emerald-50 border border-emerald-200 p-4 rounded-xl">
-              <div class="text-2xl text-emerald-600 font-bold" id="test4Rate">-</div>
-              <div class="text-xs text-emerald-800">
-                <span class="font-bold">Proactive Detection Rate:</span> CVE KEV berhasil dideteksi dalam kategori Critical/High sebelum pengumuman resmi eksploitasi oleh CISA.
+          <div class="p-4 sm:p-5 space-y-3">
+            <div class="flex items-center gap-4 bg-emerald-50 border border-emerald-200/80 p-3.5 rounded-lg">
+              <div class="text-2xl text-emerald-600 font-black" id="test4Rate">-</div>
+              <div class="text-xs text-emerald-900">
+                <span class="font-bold">Tingkat Deteksi Proaktif:</span> Kerentanan KEV berhasil diidentifikasi dalam kategori prioritas tinggi sebelum pengumuman resmi.
               </div>
             </div>
             <div class="overflow-x-auto">
               <table class="w-full text-xs text-left">
                 <thead>
-                  <tr class="border-b border-slate-200 text-slate-500 font-semibold">
+                  <tr class="border-b border-slate-200 text-slate-500 font-semibold text-[11px]">
                     <th class="py-2">Kode CVE</th>
-                    <th class="py-2">Tanggal KEV CISA</th>
-                    <th class="py-2">Tanggal Uji Pra-KEV</th>
+                    <th class="py-2">Tanggal Masuk KEV</th>
+                    <th class="py-2">Tanggal Pengujian Pra-KEV</th>
                     <th class="py-2 text-center">CVSS</th>
                     <th class="py-2 text-center">EPSS Pra-KEV</th>
                     <th class="py-2 text-center">Skor Pra-KEV</th>
                     <th class="py-2 text-center">Kategori Pra-KEV</th>
-                    <th class="py-2 text-center">Hasil Deteksi Dini</th>
+                    <th class="py-2 text-center">Hasil Deteksi</th>
                   </tr>
                 </thead>
                 <tbody id="test4TableBody" class="divide-y divide-slate-100">
@@ -510,27 +518,27 @@
         </div>
 
         <!-- (5) Ranking Quality Testing (NDCG & MRR) -->
-        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-          <div class="p-5 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200/90 overflow-hidden">
+          <div class="p-4 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
             <div>
-              <span class="text-xs font-bold text-sky-600 uppercase tracking-wider">Skema 5</span>
-              <h3 class="text-base font-bold text-slate-900">Ranking Quality Testing (NDCG, MRR, & Average Rank)</h3>
-              <p class="text-xs text-slate-500">Evaluasi efektivitas Information Retrieval terhadap penempatan kerentanan kritis.</p>
+              <span class="text-[10px] font-bold text-sky-600 uppercase tracking-wider">Pengujian 5</span>
+              <h3 class="text-sm font-bold text-slate-900">Kualitas Urutan Prioritas (NDCG, MRR, & Avg Rank)</h3>
+              <p class="text-[11px] text-slate-500">Evaluasi efektivitas penempatan kerentanan berisiko tinggi pada posisi teratas.</p>
             </div>
-            <button onclick="exportLabTestCSV('test5')" class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-medium transition flex items-center gap-1.5">
-              <i class="fa-solid fa-download"></i> Export CSV
+            <button onclick="exportLabTestCSV('test5')" class="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded text-xs font-medium transition flex items-center gap-1">
+              <i class="fa-solid fa-download text-[10px]"></i> CSV
             </button>
           </div>
-          <div class="p-5 grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div class="p-4 sm:p-5 grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div class="overflow-x-auto lg:col-span-2">
               <table class="w-full text-xs text-left">
                 <thead>
-                  <tr class="border-b border-slate-200 text-slate-500 font-semibold">
-                    <th class="py-2">Metrik Pengujian</th>
+                  <tr class="border-b border-slate-200 text-slate-500 font-semibold text-[11px]">
+                    <th class="py-2">Metrik Kualitas</th>
                     <th class="py-2 text-center">Metode Utama</th>
                     <th class="py-2 text-center">TOPSIS</th>
                     <th class="py-2 text-center">CVSS Saja</th>
-                    <th class="py-2">Interpretasi</th>
+                    <th class="py-2">Keterangan</th>
                   </tr>
                 </thead>
                 <tbody id="test5TableBody" class="divide-y divide-slate-100">
@@ -538,7 +546,7 @@
                 </tbody>
               </table>
             </div>
-            <div class="h-[220px]">
+            <div class="h-[200px]">
               <canvas id="chartTest5Radar"></canvas>
             </div>
           </div>
@@ -547,29 +555,29 @@
         <!-- (6) & (7) Ablation & Sensitivity Row -->
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <!-- (6) Ablation Testing -->
-          <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-            <div class="p-5 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
+          <div class="bg-white rounded-xl shadow-sm border border-slate-200/90 overflow-hidden">
+            <div class="p-4 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
               <div>
-                <span class="text-xs font-bold text-rose-600 uppercase tracking-wider">Skema 6</span>
-                <h3 class="text-base font-bold text-slate-900">Ablation Testing</h3>
-                <p class="text-xs text-slate-500">Kontribusi penambahan parameter (S1 vs S2 vs S3).</p>
+                <span class="text-[10px] font-bold text-rose-600 uppercase tracking-wider">Pengujian 6</span>
+                <h3 class="text-sm font-bold text-slate-900">Uji Kontribusi Parameter (Ablation)</h3>
+                <p class="text-[11px] text-slate-500">Dampak penambahan parameter EPSS dan KEV terhadap perankingan.</p>
               </div>
-              <button onclick="exportLabTestCSV('test6')" class="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-medium transition">
-                <i class="fa-solid fa-download"></i> CSV
+              <button onclick="exportLabTestCSV('test6')" class="px-2 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded text-xs font-medium transition">
+                <i class="fa-solid fa-download text-[10px]"></i> CSV
               </button>
             </div>
-            <div class="p-5 space-y-4">
-              <div class="h-[180px]">
+            <div class="p-4 space-y-4">
+              <div class="h-[170px]">
                 <canvas id="chartTest6Ablation"></canvas>
               </div>
               <div class="overflow-x-auto">
                 <table class="w-full text-xs text-left">
                   <thead>
-                    <tr class="border-b border-slate-200 text-slate-500 font-semibold">
-                      <th class="py-2">Skenario</th>
-                      <th class="py-2 text-center">Recall@20</th>
-                      <th class="py-2 text-center">Precision@20</th>
-                      <th class="py-2 text-center">Avg KEV Rank</th>
+                    <tr class="border-b border-slate-200 text-slate-500 font-semibold text-[11px]">
+                      <th class="py-1.5">Skenario</th>
+                      <th class="py-1.5 text-center">Recall@20</th>
+                      <th class="py-1.5 text-center">Precision@20</th>
+                      <th class="py-1.5 text-center">Rata-rata Rank KEV</th>
                     </tr>
                   </thead>
                   <tbody id="test6TableBody" class="divide-y divide-slate-100">
@@ -581,33 +589,33 @@
           </div>
 
           <!-- (7) Sensitivity Testing -->
-          <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-            <div class="p-5 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
+          <div class="bg-white rounded-xl shadow-sm border border-slate-200/90 overflow-hidden">
+            <div class="p-4 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
               <div>
-                <span class="text-xs font-bold text-purple-600 uppercase tracking-wider">Skema 7</span>
-                <h3 class="text-base font-bold text-slate-900">Sensitivity Testing</h3>
-                <p class="text-xs text-slate-500">Korelasi Spearman antar 3 variasi bobot parameter.</p>
+                <span class="text-[10px] font-bold text-purple-600 uppercase tracking-wider">Pengujian 7</span>
+                <h3 class="text-sm font-bold text-slate-900">Sensitivitas Bobot Penilaian</h3>
+                <p class="text-[11px] text-slate-500">Korelasi kestabilan peringkat pada variasi bobot parameter.</p>
               </div>
-              <button onclick="exportLabTestCSV('test7')" class="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-medium transition">
-                <i class="fa-solid fa-download"></i> CSV
+              <button onclick="exportLabTestCSV('test7')" class="px-2 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded text-xs font-medium transition">
+                <i class="fa-solid fa-download text-[10px]"></i> CSV
               </button>
             </div>
-            <div class="p-5 space-y-4">
+            <div class="p-4 space-y-4">
               <div class="grid grid-cols-3 gap-2 text-center">
-                <div class="p-2.5 bg-slate-50 rounded-xl border border-slate-200">
+                <div class="p-2 bg-slate-50 rounded-lg border border-slate-200">
                   <span class="text-[10px] text-slate-500 font-medium">Config 1 vs 2</span>
-                  <div class="text-base font-bold text-slate-800 mt-0.5" id="test7Rho12">-</div>
+                  <div class="text-sm font-bold text-slate-800 mt-0.5" id="test7Rho12">-</div>
                 </div>
-                <div class="p-2.5 bg-slate-50 rounded-xl border border-slate-200">
+                <div class="p-2 bg-slate-50 rounded-lg border border-slate-200">
                   <span class="text-[10px] text-slate-500 font-medium">Config 1 vs 3</span>
-                  <div class="text-base font-bold text-slate-800 mt-0.5" id="test7Rho13">-</div>
+                  <div class="text-sm font-bold text-slate-800 mt-0.5" id="test7Rho13">-</div>
                 </div>
-                <div class="p-2.5 bg-slate-50 rounded-xl border border-slate-200">
+                <div class="p-2 bg-slate-50 rounded-lg border border-slate-200">
                   <span class="text-[10px] text-slate-500 font-medium">Config 2 vs 3</span>
-                  <div class="text-base font-bold text-slate-800 mt-0.5" id="test7Rho23">-</div>
+                  <div class="text-sm font-bold text-slate-800 mt-0.5" id="test7Rho23">-</div>
                 </div>
               </div>
-              <div class="h-[180px]">
+              <div class="h-[170px]">
                 <canvas id="chartTest7Sensitivity"></canvas>
               </div>
             </div>
@@ -615,26 +623,26 @@
         </div>
 
         <!-- (8) Priority Consistency Testing -->
-        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-          <div class="p-5 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200/90 overflow-hidden">
+          <div class="p-4 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
             <div>
-              <span class="text-xs font-bold text-teal-600 uppercase tracking-wider">Skema 8</span>
-              <h3 class="text-base font-bold text-slate-900">Priority Consistency Testing (Spearman Rank Correlation)</h3>
-              <p class="text-xs text-slate-500">Uji signifikansi statistik korelasi peringkat Metode Utama vs TOPSIS.</p>
+              <span class="text-[10px] font-bold text-teal-600 uppercase tracking-wider">Pengujian 8</span>
+              <h3 class="text-sm font-bold text-slate-900">Konsistensi Antar Metode (Spearman Rank Correlation)</h3>
+              <p class="text-[11px] text-slate-500">Tingkat keselarasan peringkat antara Metode Utama dan TOPSIS.</p>
             </div>
-            <button onclick="exportLabTestCSV('test8')" class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-medium transition flex items-center gap-1.5">
-              <i class="fa-solid fa-download"></i> Export CSV
+            <button onclick="exportLabTestCSV('test8')" class="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded text-xs font-medium transition flex items-center gap-1">
+              <i class="fa-solid fa-download text-[10px]"></i> CSV
             </button>
           </div>
-          <div class="p-5 flex flex-col md:flex-row items-center gap-6">
-            <div class="p-5 bg-teal-50 border border-teal-200 rounded-2xl text-center min-w-[200px]">
-              <span class="text-xs font-bold text-teal-800 uppercase">Spearman Rho (ρ)</span>
-              <div class="text-3xl font-black text-teal-700 my-1" id="test8Rho">-</div>
-              <span class="text-[11px] text-teal-600" id="test8PVal">p-value: -</span>
+          <div class="p-4 sm:p-5 flex flex-col md:flex-row items-center gap-5">
+            <div class="p-4 bg-teal-50 border border-teal-200 rounded-xl text-center min-w-[180px]">
+              <span class="text-[10px] font-bold text-teal-800 uppercase tracking-wider">Koefisien Spearman (ρ)</span>
+              <div class="text-2xl font-black text-teal-700 my-1" id="test8Rho">-</div>
+              <span class="text-[10px] text-teal-600" id="test8PVal">p-value: -</span>
             </div>
-            <div class="text-xs space-y-2 text-slate-700">
-              <p class="font-bold text-slate-900" id="test8Interp">Menunggu hasil pengujian...</p>
-              <p class="text-slate-500 leading-relaxed">
+            <div class="text-xs space-y-1.5 text-slate-700">
+              <p class="font-bold text-slate-900" id="test8Interp">Menunggu hasil komputasi...</p>
+              <p class="text-slate-500 leading-relaxed text-[11px]">
                 Koefisien korelasi Spearman mengukur derajat monotonic agreement antara ranking yang dihasilkan oleh metode pembobotan aditif (Metode Utama) dengan metode jarak vektor preferensi (TOPSIS). Nilai mendekati 1.0 membuktikan konsistensi perangkingan yang tinggi.
               </p>
             </div>
@@ -642,30 +650,30 @@
         </div>
 
         <!-- (9) Capacity-Based Remediation Simulation -->
-        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-          <div class="p-5 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200/90 overflow-hidden">
+          <div class="p-4 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
             <div>
-              <span class="text-xs font-bold text-sky-600 uppercase tracking-wider">Skema 9</span>
-              <h3 class="text-base font-bold text-slate-900">Capacity-Based Remediation Simulation</h3>
-              <p class="text-xs text-slate-500">Simulasi efisiensi penanganan kerentanan dalam kapasitas remedi terbatas (10, 20, dan 50 CVE).</p>
+              <span class="text-[10px] font-bold text-sky-600 uppercase tracking-wider">Pengujian 9</span>
+              <h3 class="text-sm font-bold text-slate-900">Simulasi Remediasi Berbasis Kapasitas</h3>
+              <p class="text-[11px] text-slate-500">Efisiensi penanganan kerentanan aktif pada kuota perbaikan terbatas (10, 20, dan 50 CVE).</p>
             </div>
-            <button onclick="exportLabTestCSV('test9')" class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-medium transition flex items-center gap-1.5">
-              <i class="fa-solid fa-download"></i> Export CSV
+            <button onclick="exportLabTestCSV('test9')" class="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded text-xs font-medium transition flex items-center gap-1">
+              <i class="fa-solid fa-download text-[10px]"></i> CSV
             </button>
           </div>
-          <div class="p-5 space-y-4">
-            <div class="h-[220px]">
+          <div class="p-4 sm:p-5 space-y-4">
+            <div class="h-[200px]">
               <canvas id="chartTest9Capacity"></canvas>
             </div>
             <div class="overflow-x-auto">
               <table class="w-full text-xs text-left">
                 <thead>
-                  <tr class="border-b border-slate-200 text-slate-500 font-semibold">
-                    <th class="py-2">Kapasitas Slot</th>
-                    <th class="py-2 text-center">Sistem Usulan (KEV / %)</th>
-                    <th class="py-2 text-center">TOPSIS (KEV / %)</th>
-                    <th class="py-2 text-center">CVSS Saja (KEV / %)</th>
-                    <th class="py-2 text-center">Random Baseline</th>
+                  <tr class="border-b border-slate-200 text-slate-500 font-semibold text-[11px]">
+                    <th class="py-1.5">Kapasitas Slot</th>
+                    <th class="py-1.5 text-center">Metode Terpadu (KEV / %)</th>
+                    <th class="py-1.5 text-center">TOPSIS (KEV / %)</th>
+                    <th class="py-1.5 text-center">CVSS Saja (KEV / %)</th>
+                    <th class="py-1.5 text-center">Random Baseline</th>
                   </tr>
                 </thead>
                 <tbody id="test9TableBody" class="divide-y divide-slate-100">
@@ -677,30 +685,30 @@
         </div>
 
         <!-- (10) End-to-End Application Testing -->
-        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-          <div class="p-5 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200/90 overflow-hidden">
+          <div class="p-4 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
             <div>
-              <span class="text-xs font-bold text-slate-600 uppercase tracking-wider">Skema 10</span>
-              <h3 class="text-base font-bold text-slate-900">End-to-End Application Testing</h3>
-              <p class="text-xs text-slate-500">Kinerja sistem, latensi per CVE, integritas basis data, dan proteksi eskalasi KEV.</p>
+              <span class="text-[10px] font-bold text-slate-600 uppercase tracking-wider">Pengujian 10</span>
+              <h3 class="text-sm font-bold text-slate-900">Kinerja Sistem & Proteksi Kerentanan Aktif</h3>
+              <p class="text-[11px] text-slate-500">Metrik latensi eksekusi dan verifikasi proteksi eskalasi KEV.</p>
             </div>
-            <button onclick="exportLabTestCSV('test10')" class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-medium transition flex items-center gap-1.5">
-              <i class="fa-solid fa-download"></i> Export CSV
+            <button onclick="exportLabTestCSV('test10')" class="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded text-xs font-medium transition flex items-center gap-1">
+              <i class="fa-solid fa-download text-[10px]"></i> CSV
             </button>
           </div>
-          <div class="p-5 grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
-            <div class="p-4 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
-              <span class="font-bold text-slate-800">1. Latensi & Throughput</span>
+          <div class="p-4 sm:p-5 grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
+            <div class="p-3 bg-slate-50 rounded-lg border border-slate-200 space-y-1.5">
+              <span class="font-bold text-slate-800 block">1. Latensi & Throughput</span>
               <div class="text-slate-600">Waktu Total: <span id="test10TotalTime" class="font-bold text-slate-900">-</span></div>
-              <div class="text-slate-600">Avg per CVE: <span id="test10AvgTime" class="font-bold text-slate-900">-</span></div>
+              <div class="text-slate-600">Rata-rata / CVE: <span id="test10AvgTime" class="font-bold text-slate-900">-</span></div>
             </div>
-            <div class="p-4 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
-              <span class="font-bold text-slate-800">2. Proteksi Eksploitasi Aktif</span>
+            <div class="p-3 bg-slate-50 rounded-lg border border-slate-200 space-y-1.5">
+              <span class="font-bold text-slate-800 block">2. Proteksi Eksploitasi Aktif</span>
               <div class="text-slate-600">KEV di Kategori Critical: <span id="test10KevCrit" class="font-bold text-emerald-600">-</span></div>
-              <div class="text-slate-600">Status Rule-Based: <span id="test10RuleStatus" class="font-bold text-sky-600">-</span></div>
+              <div class="text-slate-600">Status Eskalasi: <span id="test10RuleStatus" class="font-bold text-sky-600">-</span></div>
             </div>
-            <div class="p-4 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
-              <span class="font-bold text-slate-800">3. Validitas Integritas Data</span>
+            <div class="p-3 bg-slate-50 rounded-lg border border-slate-200 space-y-1.5">
+              <span class="font-bold text-slate-800 block">3. Integritas Basis Data</span>
               <div class="text-slate-600" id="test10Integrity">Validasi skema dan database konsisten.</div>
             </div>
           </div>
@@ -712,10 +720,10 @@
   </main>
 
   <!-- Footer -->
-  <footer class="bg-white border-t border-slate-200 py-6 text-center text-xs text-slate-500">
+  <footer class="bg-white border-t border-slate-200/90 py-5 text-center text-xs text-slate-500 mt-auto">
     <div class="max-w-7xl mx-auto px-4">
-      <p class="font-medium text-slate-700">Aplikasi Web Skripsi Prioritisasi Kerentanan Berbasis Risiko Menggunakan Data CVSS, EPSS, dan KEV</p>
-      <p class="text-[11px] text-slate-400 mt-1">Implementasi REST API Python (Flask) • Cloud MySQL • Tailwind CSS • Chart.js</p>
+      <p class="font-semibold text-slate-700">Sistem Prioritisasi Kerentanan Keamanan Berbasis Risiko</p>
+      <p class="text-[11px] text-slate-400 mt-0.5">Integrasi Metrik CVSS v3.1 · FIRST EPSS · CISA Known Exploited Vulnerabilities</p>
     </div>
   </footer>
 
@@ -743,11 +751,11 @@
         const dot = document.getElementById('dbStatusDot');
         const text = document.getElementById('dbStatusText');
         if (data.database === 'Connected') {
-          dot.className = 'w-2.5 h-2.5 rounded-full bg-emerald-400';
+          dot.className = 'w-2 h-2 rounded-full bg-emerald-400';
           const totalInDb = data.database_counts?.vulnerabilities || 0;
           text.textContent = `Cloud MySQL: Terhubung (${totalInDb} CVE tersimpan)`;
         } else {
-          dot.className = 'w-2.5 h-2.5 rounded-full bg-rose-500';
+          dot.className = 'w-2 h-2 rounded-full bg-rose-500';
           text.textContent = `Cloud MySQL: ${data.database}`;
         }
       } catch (err) {
@@ -763,13 +771,13 @@
       const contentLab = document.getElementById('tabContentLab');
 
       if (tabId === 'analysis') {
-        btnAnalysis.className = 'pb-3 text-sky-400 border-b-2 border-sky-400 flex items-center gap-2 font-bold';
-        btnLab.className = 'pb-3 text-slate-400 hover:text-slate-200 flex items-center gap-2';
+        btnAnalysis.className = 'py-3 text-sky-400 border-b-2 border-sky-400 flex items-center gap-2 transition font-semibold';
+        btnLab.className = 'py-3 text-slate-400 hover:text-slate-200 border-b-2 border-transparent flex items-center gap-2 transition';
         contentAnalysis.classList.remove('hidden');
         contentLab.classList.add('hidden');
       } else {
-        btnLab.className = 'pb-3 text-indigo-400 border-b-2 border-indigo-400 flex items-center gap-2 font-bold';
-        btnAnalysis.className = 'pb-3 text-slate-400 hover:text-slate-200 flex items-center gap-2';
+        btnLab.className = 'py-3 text-sky-400 border-b-2 border-sky-400 flex items-center gap-2 transition font-semibold';
+        btnAnalysis.className = 'py-3 text-slate-400 hover:text-slate-200 border-b-2 border-transparent flex items-center gap-2 transition';
         contentLab.classList.remove('hidden');
         contentAnalysis.classList.add('hidden');
 
@@ -817,14 +825,14 @@
 
     // Seed database directly
     async function seedDatabaseDirectly() {
-      if (!confirm("Masukkan 60 data CVE sampel pra-verifikasi langsung ke Cloud MySQL?")) return;
+      if (!confirm("Sinkronkan 60 data CVE sampel ke Cloud MySQL?")) return;
       try {
         const res = await fetch('/api/seed-database', { method: 'POST' });
         const data = await res.json();
-        alert(data.message || "Seeding selesai.");
+        alert(data.message || "Sinkronisasi selesai.");
         checkDatabaseHealth();
       } catch (err) {
-        alert("Gagal melakukan seed: " + err.message);
+        alert("Gagal melakukan sinkronisasi: " + err.message);
       }
     }
 
@@ -845,7 +853,7 @@
     async function runAnalysisProcess() {
       const cveList = parseCveInput(document.getElementById('cveInput').value);
       if (cveList.length === 0) {
-        alert("Harap masukkan setidaknya satu kode CVE yang valid (misal CVE-2024-3400) atau klik 'Load Sample Dataset'!");
+        alert("Harap masukkan setidaknya satu kode CVE yang valid (contoh: CVE-2024-3400) atau klik 'Muat Sampel'!");
         return;
       }
 
@@ -868,10 +876,10 @@
           body: JSON.stringify({ cve_list: cveList })
         });
         const fetchData = await fetchRes.json();
-        if (!fetchRes.ok) throw new Error(fetchData.error || "Gagal fetch data CVE");
+        if (!fetchRes.ok) throw new Error(fetchData.error || "Gagal mengambil data CVE");
 
         currentVulnerabilities = fetchData.vulnerabilities;
-        statusText.textContent = "Melakukan kalkulasi Prioritisasi (Weighted Scoring + Rule-Based + TOPSIS)...";
+        statusText.textContent = "Melakukan kalkulasi prioritisasi risiko...";
 
         // Step 2: Run Prioritization
         const prioRes = await fetch('/api/prioritize', {
@@ -911,7 +919,7 @@
 
       // Stats
       document.getElementById('statTotalCve').textContent = summary.total;
-      document.getElementById('statExecutionTime').textContent = `${prioData.elapsed_time_sec} detik`;
+      document.getElementById('statExecutionTime').textContent = `${prioData.elapsed_time_sec} s`;
       document.getElementById('statCritical').textContent = summary.category_distribution.Critical || 0;
       document.getElementById('statHigh').textContent = summary.category_distribution.High || 0;
       document.getElementById('statMedium').textContent = summary.category_distribution.Medium || 0;
@@ -932,18 +940,18 @@
           : `<span class="px-2 py-0.5 rounded-full bg-slate-100 text-slate-500 text-[10px]">Non-KEV</span>`;
 
         tr.innerHTML = `
-          <td class="py-3 px-4 text-center font-bold text-slate-900">${row.final_rank_weighted}</td>
-          <td class="py-3 px-4 font-mono font-bold text-sky-700">${row.cve_id}</td>
-          <td class="py-3 px-3 text-center font-semibold text-slate-800">${(row.cvss_norm * 10).toFixed(1)}</td>
-          <td class="py-3 px-3 text-center text-slate-700">${row.epss_norm.toFixed(4)}</td>
-          <td class="py-3 px-3 text-center">${isKevBadge}</td>
-          <td class="py-3 px-3 text-right font-bold text-indigo-700">${row.rule_based_score.toFixed(2)}</td>
-          <td class="py-3 px-3 text-right font-medium text-slate-700">${row.topsis_score.toFixed(2)}</td>
-          <td class="py-3 px-3 text-center text-slate-600">#${row.final_rank_topsis}</td>
-          <td class="py-3 px-3 text-center">
-            <span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold ${badgeClass}">${row.priority_category}</span>
+          <td class="py-2.5 px-3 text-center font-bold text-slate-900">${row.final_rank_weighted}</td>
+          <td class="py-2.5 px-3 font-mono font-bold text-sky-700">${row.cve_id}</td>
+          <td class="py-2.5 px-3 text-center font-semibold text-slate-800">${(row.cvss_norm * 10).toFixed(1)}</td>
+          <td class="py-2.5 px-3 text-center text-slate-700">${row.epss_norm.toFixed(4)}</td>
+          <td class="py-2.5 px-3 text-center">${isKevBadge}</td>
+          <td class="py-2.5 px-3 text-right font-bold text-sky-800">${row.rule_based_score.toFixed(2)}</td>
+          <td class="py-2.5 px-3 text-right font-medium text-slate-600">${row.topsis_score.toFixed(2)}</td>
+          <td class="py-2.5 px-3 text-center text-slate-500 font-mono">#${row.final_rank_topsis}</td>
+          <td class="py-2.5 px-3 text-center">
+            <span class="px-2 py-0.5 rounded-md text-[10px] font-bold ${badgeClass}">${row.priority_category}</span>
           </td>
-          <td class="py-3 px-4 text-slate-600 max-w-xs truncate hover:whitespace-normal cursor-pointer text-[11px]" title="${row.explainability_text}">
+          <td class="py-2.5 px-4 text-slate-600 max-w-xs truncate hover:whitespace-normal cursor-pointer text-[11px]" title="${row.explainability_text}">
             ${row.explainability_text}
           </td>
         `;
@@ -980,7 +988,7 @@
           responsive: true,
           maintainAspectRatio: false,
           plugins: {
-            legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 10 } } }
+            legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 10 } } }
           }
         }
       });
@@ -1001,16 +1009,16 @@
           labels: labels,
           datasets: [
             {
-              label: 'Metode Utama (Rule-Based)',
+              label: 'Metode Utama',
               data: mainScores,
               backgroundColor: '#0284c7',
-              borderRadius: 4
+              borderRadius: 3
             },
             {
-              label: 'Metode TOPSIS',
+              label: 'TOPSIS',
               data: topsisScores,
-              backgroundColor: '#a855f7',
-              borderRadius: 4
+              backgroundColor: '#94a3b8',
+              borderRadius: 3
             }
           ]
         },
@@ -1018,18 +1026,18 @@
           responsive: true,
           maintainAspectRatio: false,
           scales: {
-            y: { min: 0, max: 100, ticks: { font: { size: 10 } } },
-            x: { ticks: { font: { size: 9 }, maxRotation: 45 } }
+            y: { min: 0, max: 100, ticks: { font: { size: 9 } } },
+            x: { ticks: { font: { size: 8 }, maxRotation: 45 } }
           },
           plugins: {
-            legend: { position: 'top', labels: { boxWidth: 12, font: { size: 11 } } }
+            legend: { position: 'top', labels: { boxWidth: 10, font: { size: 10 } } }
           }
         }
       });
     }
 
     // =================================================================
-    // LABORATORIUM 10 PENGUJIAN LOGIC
+    // LABORATORIUM EVALUASI LOGIC
     // =================================================================
     async function runAllLabEvaluations() {
       if (currentVulnerabilities.length === 0) {
@@ -1076,10 +1084,10 @@
     function renderLabResults(evalData) {
       // 1. Baseline
       const t1 = evalData.test_1_baseline;
-      document.getElementById('test1MeanDisp').textContent = `${t1.mean_rank_displacement} rank`;
+      document.getElementById('test1MeanDisp').textContent = `${t1.mean_rank_displacement} posisi`;
       document.getElementById('test1Overlap10').textContent = `${t1.top10_overlap}/10 (${t1.top10_overlap_pct}%)`;
       document.getElementById('test1Desc').textContent = 
-        `Ditemukan rata-rata pergeseran peringkat sebesar ${t1.mean_rank_displacement} posisi antara Metode Utama dan TOPSIS. Pada Top-10 prioritas, terdapat kesepakatan irisan sebesar ${t1.top10_overlap_pct}%.`;
+        `Rata-rata pergeseran peringkat sebesar ${t1.mean_rank_displacement} posisi antara Metode Utama dan TOPSIS. Pada Top-10 prioritas, terdapat keselarasan sebesar ${t1.top10_overlap_pct}%.`;
       renderChartTest1(t1.details.slice(0, 15));
 
       // 2. Recall
@@ -1089,10 +1097,10 @@
       t2.metrics.forEach(m => {
         t2Body.innerHTML += `
           <tr class="border-b border-slate-100">
-            <td class="py-2 font-semibold text-slate-800">Recall@${m.k}</td>
-            <td class="py-2 text-center font-bold text-sky-600">${m.recall_weighted_pct}% (${m.kev_caught_weighted}/${m.total_kev})</td>
-            <td class="py-2 text-center text-purple-600">${m.recall_topsis_pct}%</td>
-            <td class="py-2 text-center text-slate-600">${m.recall_cvss_pct}%</td>
+            <td class="py-1.5 font-semibold text-slate-800">Recall@${m.k}</td>
+            <td class="py-1.5 text-center font-bold text-sky-600">${m.recall_weighted_pct}% (${m.kev_caught_weighted}/${m.total_kev})</td>
+            <td class="py-1.5 text-center text-purple-600">${m.recall_topsis_pct}%</td>
+            <td class="py-1.5 text-center text-slate-600">${m.recall_cvss_pct}%</td>
           </tr>
         `;
       });
@@ -1105,10 +1113,10 @@
       t3.metrics.forEach(m => {
         t3Body.innerHTML += `
           <tr class="border-b border-slate-100">
-            <td class="py-2 font-semibold text-slate-800">Precision@${m.k}</td>
-            <td class="py-2 text-center font-bold text-sky-600">${m.precision_weighted_pct}%</td>
-            <td class="py-2 text-center text-purple-600">${m.precision_topsis_pct}%</td>
-            <td class="py-2 text-center text-slate-600">${m.precision_cvss_pct}%</td>
+            <td class="py-1.5 font-semibold text-slate-800">Precision@${m.k}</td>
+            <td class="py-1.5 text-center font-bold text-sky-600">${m.precision_weighted_pct}%</td>
+            <td class="py-1.5 text-center text-purple-600">${m.precision_topsis_pct}%</td>
+            <td class="py-1.5 text-center text-slate-600">${m.precision_cvss_pct}%</td>
           </tr>
         `;
       });
@@ -1121,18 +1129,18 @@
       t4Body.innerHTML = '';
       t4.details.slice(0, 10).forEach(b => {
         const badge = b.proactively_detected
-          ? `<span class="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-bold text-[10px]">Terdeteksi Dini</span>`
-          : `<span class="px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 text-[10px]">Lolos</span>`;
+          ? `<span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold text-[10px]">Terdeteksi</span>`
+          : `<span class="px-2 py-0.5 rounded bg-slate-100 text-slate-600 text-[10px]">Lolos</span>`;
         t4Body.innerHTML += `
           <tr class="border-b border-slate-100">
-            <td class="py-2 font-mono font-bold text-slate-900">${b.cve_id}</td>
-            <td class="py-2 text-slate-600">${b.kev_date_added}</td>
-            <td class="py-2 text-slate-500">${b.backtest_date}</td>
-            <td class="py-2 text-center font-semibold">${b.cvss_score.toFixed(1)}</td>
-            <td class="py-2 text-center text-indigo-600 font-semibold">${b.historical_epss.toFixed(4)}</td>
-            <td class="py-2 text-center font-bold">${b.pre_kev_score.toFixed(2)}</td>
-            <td class="py-2 text-center font-semibold text-slate-800">${b.pre_kev_category}</td>
-            <td class="py-2 text-center">${badge}</td>
+            <td class="py-1.5 font-mono font-bold text-slate-900">${b.cve_id}</td>
+            <td class="py-1.5 text-slate-600">${b.kev_date_added}</td>
+            <td class="py-1.5 text-slate-500">${b.backtest_date}</td>
+            <td class="py-1.5 text-center font-semibold">${b.cvss_score.toFixed(1)}</td>
+            <td class="py-1.5 text-center text-sky-600 font-semibold">${b.historical_epss.toFixed(4)}</td>
+            <td class="py-1.5 text-center font-bold">${b.pre_kev_score.toFixed(2)}</td>
+            <td class="py-1.5 text-center font-semibold text-slate-800">${b.pre_kev_category}</td>
+            <td class="py-1.5 text-center">${badge}</td>
           </tr>
         `;
       });
@@ -1144,11 +1152,11 @@
       t5.metrics.forEach(m => {
         t5Body.innerHTML += `
           <tr class="border-b border-slate-100">
-            <td class="py-2 font-semibold text-slate-800">${m.metric}</td>
-            <td class="py-2 text-center font-bold text-sky-600">${m.weighted}</td>
-            <td class="py-2 text-center text-purple-600">${m.topsis}</td>
-            <td class="py-2 text-center text-slate-600">${m.cvss_only}</td>
-            <td class="py-2 text-[11px] text-slate-500">${m.interpretation}</td>
+            <td class="py-1.5 font-semibold text-slate-800">${m.metric}</td>
+            <td class="py-1.5 text-center font-bold text-sky-600">${m.weighted}</td>
+            <td class="py-1.5 text-center text-purple-600">${m.topsis}</td>
+            <td class="py-1.5 text-center text-slate-600">${m.cvss_only}</td>
+            <td class="py-1.5 text-[11px] text-slate-500">${m.interpretation}</td>
           </tr>
         `;
       });
@@ -1161,10 +1169,10 @@
       t6.scenarios.forEach(s => {
         t6Body.innerHTML += `
           <tr class="border-b border-slate-100">
-            <td class="py-2 font-semibold text-slate-800">${s.scenario_name}</td>
-            <td class="py-2 text-center font-bold text-sky-600">${s.recall_20_pct}%</td>
-            <td class="py-2 text-center text-slate-700 font-semibold">${s.precision_20_pct}%</td>
-            <td class="py-2 text-center font-bold text-slate-900">${s.avg_kev_rank}</td>
+            <td class="py-1.5 font-semibold text-slate-800">${s.scenario_name}</td>
+            <td class="py-1.5 text-center font-bold text-sky-600">${s.recall_20_pct}%</td>
+            <td class="py-1.5 text-center text-slate-700 font-semibold">${s.precision_20_pct}%</td>
+            <td class="py-1.5 text-center font-bold text-slate-900">${s.avg_kev_rank}</td>
           </tr>
         `;
       });
@@ -1190,11 +1198,11 @@
       t9.simulations.forEach(c => {
         t9Body.innerHTML += `
           <tr class="border-b border-slate-100">
-            <td class="py-2 font-bold text-slate-800">${c.capacity} CVE</td>
-            <td class="py-2 text-center font-bold text-sky-600">${c.proposed_kev_caught} KEV (${c.proposed_efficiency_pct}%)</td>
-            <td class="py-2 text-center text-purple-600 font-medium">${c.topsis_kev_caught} KEV (${c.topsis_efficiency_pct}%)</td>
-            <td class="py-2 text-center text-slate-600">${c.cvss_kev_caught} KEV (${c.cvss_efficiency_pct}%)</td>
-            <td class="py-2 text-center text-slate-400">${c.random_kev_expected} KEV (${c.random_efficiency_pct}%)</td>
+            <td class="py-1.5 font-bold text-slate-800">${c.capacity} CVE</td>
+            <td class="py-1.5 text-center font-bold text-sky-600">${c.proposed_kev_caught} KEV (${c.proposed_efficiency_pct}%)</td>
+            <td class="py-1.5 text-center text-purple-600 font-medium">${c.topsis_kev_caught} KEV (${c.topsis_efficiency_pct}%)</td>
+            <td class="py-1.5 text-center text-slate-600">${c.cvss_kev_caught} KEV (${c.cvss_efficiency_pct}%)</td>
+            <td class="py-1.5 text-center text-slate-400">${c.random_kev_expected} KEV (${c.random_efficiency_pct}%)</td>
           </tr>
         `;
       });
@@ -1217,16 +1225,16 @@
         data: {
           labels: details.map(d => d.cve_id),
           datasets: [{
-            label: 'Rank Displacement (|Rank Utama - Rank TOPSIS|)',
+            label: 'Pergeseran Peringkat',
             data: details.map(d => d.rank_displacement),
             backgroundColor: '#38bdf8',
-            borderRadius: 4
+            borderRadius: 3
           }]
         },
         options: {
           responsive: true,
           maintainAspectRatio: false,
-          scales: { y: { beginAtZero: true, title: { display: true, text: 'Selisih Peringkat' } } },
+          scales: { y: { beginAtZero: true, title: { display: true, text: 'Selisih Posisi' } } },
           plugins: { legend: { display: false } }
         }
       });
@@ -1285,9 +1293,9 @@
         data: {
           labels: filtered.map(m => m.metric),
           datasets: [
-            { label: 'Metode Utama', data: filtered.map(m => m.weighted), borderColor: '#0284c7', backgroundColor: 'rgba(2,132,199,0.2)' },
-            { label: 'TOPSIS', data: filtered.map(m => m.topsis), borderColor: '#a855f7', backgroundColor: 'rgba(168,85,247,0.2)' },
-            { label: 'CVSS Saja', data: filtered.map(m => m.cvss_only), borderColor: '#94a3b8', backgroundColor: 'rgba(148,163,184,0.2)' }
+            { label: 'Metode Utama', data: filtered.map(m => m.weighted), borderColor: '#0284c7', backgroundColor: 'rgba(2,132,199,0.15)' },
+            { label: 'TOPSIS', data: filtered.map(m => m.topsis), borderColor: '#a855f7', backgroundColor: 'rgba(168,85,247,0.15)' },
+            { label: 'CVSS Saja', data: filtered.map(m => m.cvss_only), borderColor: '#94a3b8', backgroundColor: 'rgba(148,163,184,0.15)' }
           ]
         },
         options: {
@@ -1305,7 +1313,7 @@
       chartInstances['test6'] = new Chart(ctx, {
         type: 'bar',
         data: {
-          labels: ['S1 (CVSS)', 'S2 (CVSS+EPSS)', 'S3 (CVSS+EPSS+KEV)'],
+          labels: ['S1 (CVSS)', 'S2 (+EPSS)', 'S3 (+KEV)'],
           datasets: [
             { label: 'Recall@20 (%)', data: scenarios.map(s => s.recall_20_pct), backgroundColor: '#0ea5e9' },
             { label: 'Precision@20 (%)', data: scenarios.map(s => s.precision_20_pct), backgroundColor: '#10b981' }
@@ -1336,7 +1344,7 @@
         options: {
           responsive: true,
           maintainAspectRatio: false,
-          scales: { y: { reverse: true, title: { display: true, text: 'Peringkat (1=Tertinggi)' } } },
+          scales: { y: { reverse: true, title: { display: true, text: 'Peringkat' } } },
           plugins: { legend: { position: 'top', labels: { boxWidth: 10, font: { size: 9 } } } }
         }
       });
@@ -1348,9 +1356,9 @@
       chartInstances['test9'] = new Chart(ctx, {
         type: 'bar',
         data: {
-          labels: sims.map(s => `${s.capacity} CVE`),
+          labels: sims.map(s => `${s.capacity} Slot`),
           datasets: [
-            { label: 'Sistem Usulan (KEV Tertangani)', data: sims.map(s => s.proposed_kev_caught), backgroundColor: '#0284c7' },
+            { label: 'Metode Terpadu', data: sims.map(s => s.proposed_kev_caught), backgroundColor: '#0284c7' },
             { label: 'TOPSIS', data: sims.map(s => s.topsis_kev_caught), backgroundColor: '#a855f7' },
             { label: 'CVSS Saja', data: sims.map(s => s.cvss_kev_caught), backgroundColor: '#64748b' }
           ]
@@ -1358,7 +1366,7 @@
         options: {
           responsive: true,
           maintainAspectRatio: false,
-          scales: { y: { beginAtZero: true, title: { display: true, text: 'Jumlah KEV Tereliminasi' } } },
+          scales: { y: { beginAtZero: true, title: { display: true, text: 'KEV Teridentifikasi' } } },
           plugins: { legend: { position: 'top', labels: { boxWidth: 10, font: { size: 9 } } } }
         }
       });
@@ -1377,7 +1385,7 @@
 
     function exportLabTestCSV(testId) {
       if (!currentEvaluationResult) {
-        alert("Silakan jalankan pengujian laboratorium terlebih dahulu.");
+        alert("Silakan jalankan evaluasi terlebih dahulu.");
         return;
       }
       let exportData = [];
