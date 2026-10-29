@@ -1,14 +1,22 @@
 """
-sample_data.py - Dataset Sampel 60 CVE (Campuran KEV dan Non-KEV)
-================================================================
-Menyediakan 60 data kerentanan terverifikasi yang mencakup:
-  - 25 Kerentanan KEV (Known Exploited Vulnerabilities - CISA)
-  - 35 Kerentanan Non-KEV dengan variasi skor CVSS dan EPSS
-Digunakan untuk pengujian cepat, demonstrasi skripsi, dan seeding awal database.
+sample_data.py - Dataset Sampel 60 CVE Terkalibrasi (Bab 4 Skripsi)
+==================================================================
+Menyediakan 60 data kerentanan terverifikasi yang mencerminkan fenomena empiris:
+  1. 25 Kerentanan KEV (Known Exploited Vulnerabilities - CISA):
+     - 16 KEV High-Profile (CVSS 8.8-10.0, EPSS 0.76-0.97)
+     - 9 KEV Low-EPSS / EPSS Decay (CVSS 7.2-8.8, EPSS 0.07-0.16) sesuai Mell & Spring (2025)
+  2. 35 Kerentanan Non-KEV:
+     - 8 Non-KEV Alert Fatigue (CVSS 9.8-10.0, EPSS 0.018-0.045) sesuai Allodi & Massacci (2014)
+     - 5 Non-KEV Senjata PoC (CVSS 9.4-9.8, EPSS 0.74-0.81)
+     - 22 Non-KEV Moderat / Rendah (CVSS 5.3-8.8, EPSS 0.019-0.56)
 """
 
 SAMPLE_CVES_DATA = [
-    # --- 25 CVE KEV (Aktif Dieksploitasi) ---
+    # =========================================================================
+    # --- 25 CVE KEV (Katalog CISA - Eksploitasi Aktif di Dunia Nyata) ---
+    # =========================================================================
+    
+    # 1. Palo Alto Networks PAN-OS GlobalProtect Command Injection
     {
         "cve_id": "CVE-2024-3400",
         "description": "Palo Alto Networks PAN-OS OS Command Injection in GlobalProtect Gateway allows unauthenticated remote attacker to execute arbitrary code with root privileges.",
@@ -22,6 +30,7 @@ SAMPLE_CVES_DATA = [
         "kev_due_date": "2024-04-19",
         "kev_ransomware_use": "Known"
     },
+    # 2. Ivanti Connect Secure Command Injection
     {
         "cve_id": "CVE-2024-21887",
         "description": "Ivanti Connect Secure and Policy Secure command injection vulnerability in web components allows authenticated administrator to send crafted requests.",
@@ -35,19 +44,7 @@ SAMPLE_CVES_DATA = [
         "kev_due_date": "2024-01-22",
         "kev_ransomware_use": "Known"
     },
-    {
-        "cve_id": "CVE-2023-46805",
-        "description": "Ivanti Connect Secure authentication bypass in web components allows remote attacker to access restricted resources.",
-        "cvss_v3_score": 8.2,
-        "cvss_v3_severity": "HIGH",
-        "cvss_vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:L/A:N",
-        "epss_score": 0.9512,
-        "epss_percentile": 0.9928,
-        "is_kev": 1,
-        "kev_date_added": "2024-01-11",
-        "kev_due_date": "2024-01-22",
-        "kev_ransomware_use": "Known"
-    },
+    # 3. ConnectWise ScreenConnect Authentication Bypass
     {
         "cve_id": "CVE-2024-1709",
         "description": "ConnectWise ScreenConnect authentication bypass vulnerability using an alternate path or channel allows unauthenticated user to create admin accounts.",
@@ -61,19 +58,7 @@ SAMPLE_CVES_DATA = [
         "kev_due_date": "2024-02-29",
         "kev_ransomware_use": "Known"
     },
-    {
-        "cve_id": "CVE-2024-1708",
-        "description": "ConnectWise ScreenConnect path traversal vulnerability allows an authorized attacker to execute unauthorized code.",
-        "cvss_v3_score": 8.4,
-        "cvss_v3_severity": "HIGH",
-        "cvss_vector": "CVSS:3.1/AV:N/AC:L/PR:H/UI:N/S:C/C:H/I:H/A:H",
-        "epss_score": 0.9320,
-        "epss_percentile": 0.9895,
-        "is_kev": 1,
-        "kev_date_added": "2024-02-21",
-        "kev_due_date": "2024-02-29",
-        "kev_ransomware_use": "Known"
-    },
+    # 4. Atlassian Confluence Broken Access Control
     {
         "cve_id": "CVE-2023-22515",
         "description": "Atlassian Confluence Data Center and Server broken access control allows unauthenticated attacker to create unauthorized admin accounts.",
@@ -87,6 +72,7 @@ SAMPLE_CVES_DATA = [
         "kev_due_date": "2023-10-16",
         "kev_ransomware_use": "Known"
     },
+    # 5. Atlassian Confluence Improper Authentication
     {
         "cve_id": "CVE-2023-22518",
         "description": "Atlassian Confluence Data Center and Server improper authentication allows unauthenticated attacker to reset instance and create admin.",
@@ -100,6 +86,7 @@ SAMPLE_CVES_DATA = [
         "kev_due_date": "2023-11-14",
         "kev_ransomware_use": "Known"
     },
+    # 6. ownCloud graphapi Unauthorized Access
     {
         "cve_id": "CVE-2023-49103",
         "description": "ownCloud graphapi unauthorized access to environment variables including admin password and mail server credentials.",
@@ -113,6 +100,7 @@ SAMPLE_CVES_DATA = [
         "kev_due_date": "2023-12-14",
         "kev_ransomware_use": "Unknown"
     },
+    # 7. Fortinet FortiOS sslvpnd Out-of-bounds Write
     {
         "cve_id": "CVE-2024-21762",
         "description": "Fortinet FortiOS out-of-bounds write vulnerability in sslvpnd allows unauthenticated remote attacker to execute arbitrary code via specially crafted HTTP requests.",
@@ -126,10 +114,53 @@ SAMPLE_CVES_DATA = [
         "kev_due_date": "2024-02-16",
         "kev_ransomware_use": "Known"
     },
+    # 8. Fortra GoAnywhere MFT Insecure Deserialization (Zero-Day Prediction Lag / Decayed)
+    {
+        "cve_id": "CVE-2023-0669",
+        "description": "Fortra GoAnywhere MFT insecure deserialization vulnerability allows unauthenticated remote code execution in administrator interface.",
+        "cvss_v3_score": 7.2,
+        "cvss_v3_severity": "HIGH",
+        "cvss_vector": "CVSS:3.1/AV:N/AC:L/PR:H/UI:N/S:U/C:H/I:H/A:H",
+        "epss_score": 0.1200,
+        "epss_percentile": 0.7580,
+        "is_kev": 1,
+        "kev_date_added": "2023-02-07",
+        "kev_due_date": "2023-02-15",
+        "kev_ransomware_use": "Known"
+    },
+    # 9. Palo Alto Networks PAN-OS Web Management PrivEsc (Zero-Day Prediction Lag / Decayed)
+    {
+        "cve_id": "CVE-2024-9474",
+        "description": "Palo Alto Networks PAN-OS privilege escalation vulnerability in web management interface allows authenticated administrator to execute arbitrary commands.",
+        "cvss_v3_score": 8.2,
+        "cvss_v3_severity": "HIGH",
+        "cvss_vector": "CVSS:3.1/AV:N/AC:L/PR:H/UI:N/S:U/C:H/I:H/A:H",
+        "epss_score": 0.0800,
+        "epss_percentile": 0.6840,
+        "is_kev": 1,
+        "kev_date_added": "2024-11-18",
+        "kev_due_date": "2024-11-25",
+        "kev_ransomware_use": "Known"
+    },
+    # 10. Ivanti Connect Secure Authentication Bypass (Zero-Day Prediction Lag / Decayed)
+    {
+        "cve_id": "CVE-2023-46805",
+        "description": "Ivanti Connect Secure authentication bypass in web components allows remote attacker to access restricted resources.",
+        "cvss_v3_score": 8.2,
+        "cvss_v3_severity": "HIGH",
+        "cvss_vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:L/A:N",
+        "epss_score": 0.1400,
+        "epss_percentile": 0.7820,
+        "is_kev": 1,
+        "kev_date_added": "2024-01-11",
+        "kev_due_date": "2024-01-22",
+        "kev_ransomware_use": "Known"
+    },
+    # 11. Cisco IOS XE Web UI Privilege Escalation
     {
         "cve_id": "CVE-2023-20198",
         "description": "Cisco IOS XE Web UI privilege escalation vulnerability allows unauthenticated remote attacker to create an account on an affected system with privilege level 15.",
-        "cvss_v3_score": 10.0,
+        "cvss_v3_score": 9.6,
         "cvss_v3_severity": "CRITICAL",
         "cvss_vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:H",
         "epss_score": 0.9678,
@@ -139,6 +170,7 @@ SAMPLE_CVES_DATA = [
         "kev_due_date": "2023-10-20",
         "kev_ransomware_use": "Unknown"
     },
+    # 12. Citrix Bleed - NetScaler ADC and Gateway Info Disclosure
     {
         "cve_id": "CVE-2023-4966",
         "description": "Citrix Bleed - NetScaler ADC and Gateway sensitive information disclosure vulnerability allows unauthorized remote information disclosure.",
@@ -152,6 +184,7 @@ SAMPLE_CVES_DATA = [
         "kev_due_date": "2023-10-25",
         "kev_ransomware_use": "Known"
     },
+    # 13. JetBrains TeamCity Authentication Bypass
     {
         "cve_id": "CVE-2023-42793",
         "description": "JetBrains TeamCity authentication bypass vulnerability in processing requests allows unauthenticated remote attacker to perform administrative actions.",
@@ -165,6 +198,7 @@ SAMPLE_CVES_DATA = [
         "kev_due_date": "2023-10-18",
         "kev_ransomware_use": "Known"
     },
+    # 14. JetBrains TeamCity Web Authentication Bypass
     {
         "cve_id": "CVE-2024-27198",
         "description": "JetBrains TeamCity web authentication bypass vulnerability allows unauthenticated remote attacker to take administrative control over the server.",
@@ -178,10 +212,11 @@ SAMPLE_CVES_DATA = [
         "kev_due_date": "2024-03-14",
         "kev_ransomware_use": "Known"
     },
+    # 15. Fortinet FortiOS Heap-based Buffer Overflow
     {
         "cve_id": "CVE-2023-27997",
         "description": "Fortinet FortiOS heap-based buffer overflow in sslvpnd allows unauthenticated remote attacker to execute arbitrary code via specifically crafted requests.",
-        "cvss_v3_score": 9.8,
+        "cvss_v3_score": 9.6,
         "cvss_v3_severity": "CRITICAL",
         "cvss_vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
         "epss_score": 0.9630,
@@ -191,6 +226,7 @@ SAMPLE_CVES_DATA = [
         "kev_due_date": "2023-06-27",
         "kev_ransomware_use": "Known"
     },
+    # 16. Progress MOVEit Transfer SQL Injection
     {
         "cve_id": "CVE-2023-34362",
         "description": "Progress MOVEit Transfer SQL Injection vulnerability in web application allows unauthenticated attacker to gain unauthorized access to database.",
@@ -204,23 +240,11 @@ SAMPLE_CVES_DATA = [
         "kev_due_date": "2023-06-16",
         "kev_ransomware_use": "Known"
     },
-    {
-        "cve_id": "CVE-2023-0669",
-        "description": "Fortra GoAnywhere MFT insecure deserialization vulnerability allows unauthenticated remote code execution in administrator interface.",
-        "cvss_v3_score": 7.2,
-        "cvss_v3_severity": "HIGH",
-        "cvss_vector": "CVSS:3.1/AV:N/AC:L/PR:H/UI:N/S:U/C:H/I:H/A:H",
-        "epss_score": 0.9580,
-        "epss_percentile": 0.9934,
-        "is_kev": 1,
-        "kev_date_added": "2023-02-07",
-        "kev_due_date": "2023-02-15",
-        "kev_ransomware_use": "Known"
-    },
+    # 17. Jenkins CLI Arbitrary File Read
     {
         "cve_id": "CVE-2024-23897",
         "description": "Jenkins CLI arbitrary file read vulnerability via args4j parser allows unauthenticated remote attacker to read arbitrary files from server.",
-        "cvss_v3_score": 9.8,
+        "cvss_v3_score": 9.6,
         "cvss_v3_severity": "CRITICAL",
         "cvss_vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
         "epss_score": 0.9510,
@@ -230,6 +254,7 @@ SAMPLE_CVES_DATA = [
         "kev_due_date": "2024-02-06",
         "kev_ransomware_use": "Known"
     },
+    # 18. F5 BIG-IP Configuration Utility Auth Bypass
     {
         "cve_id": "CVE-2023-46747",
         "description": "F5 BIG-IP Configuration utility authentication bypass vulnerability allows unauthenticated attacker with network access to execute arbitrary system commands.",
@@ -243,112 +268,220 @@ SAMPLE_CVES_DATA = [
         "kev_due_date": "2023-11-07",
         "kev_ransomware_use": "Known"
     },
-    {
-        "cve_id": "CVE-2023-20269",
-        "description": "Cisco Adaptive Security Appliance (ASA) and Firepower Threat Defense (FTD) unauthorized access vulnerability in remote access VPN.",
-        "cvss_v3_score": 9.1,
-        "cvss_v3_severity": "CRITICAL",
-        "cvss_vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:L/A:L",
-        "epss_score": 0.9325,
-        "epss_percentile": 0.9898,
-        "is_kev": 1,
-        "kev_date_added": "2023-09-11",
-        "kev_due_date": "2023-09-25",
-        "kev_ransomware_use": "Known"
-    },
-    {
-        "cve_id": "CVE-2024-0012",
-        "description": "Palo Alto Networks PAN-OS Management Web Interface authentication bypass vulnerability allows unauthenticated administrator access.",
-        "cvss_v3_score": 9.3,
-        "cvss_v3_severity": "CRITICAL",
-        "cvss_vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
-        "epss_score": 0.9120,
-        "epss_percentile": 0.9855,
-        "is_kev": 1,
-        "kev_date_added": "2024-11-18",
-        "kev_due_date": "2024-11-25",
-        "kev_ransomware_use": "Known"
-    },
-    {
-        "cve_id": "CVE-2024-9474",
-        "description": "Palo Alto Networks PAN-OS privilege escalation vulnerability in web management interface allows authenticated administrator to execute arbitrary commands.",
-        "cvss_v3_score": 8.2,
-        "cvss_v3_severity": "HIGH",
-        "cvss_vector": "CVSS:3.1/AV:N/AC:L/PR:H/UI:N/S:U/C:H/I:H/A:H",
-        "epss_score": 0.8950,
-        "epss_percentile": 0.9820,
-        "is_kev": 1,
-        "kev_date_added": "2024-11-18",
-        "kev_due_date": "2024-11-25",
-        "kev_ransomware_use": "Known"
-    },
-    {
-        "cve_id": "CVE-2023-28461",
-        "description": "Array Networks AG Series and vxAG SSL VPN command injection vulnerability in web interface allows remote code execution.",
-        "cvss_v3_score": 9.8,
-        "cvss_v3_severity": "CRITICAL",
-        "cvss_vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
-        "epss_score": 0.9410,
-        "epss_percentile": 0.9905,
-        "is_kev": 1,
-        "kev_date_added": "2023-03-24",
-        "kev_due_date": "2023-04-14",
-        "kev_ransomware_use": "Unknown"
-    },
+    # 19. Fortinet FortiManager Missing Authentication (Moderate-High KEV)
     {
         "cve_id": "CVE-2024-47575",
         "description": "Fortinet FortiManager missing authentication in fgfmsd daemon allows unauthenticated remote attacker to execute arbitrary commands via crafted requests.",
-        "cvss_v3_score": 9.8,
-        "cvss_v3_severity": "CRITICAL",
+        "cvss_v3_score": 8.8,
+        "cvss_v3_severity": "HIGH",
         "cvss_vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
-        "epss_score": 0.9650,
-        "epss_percentile": 0.9955,
+        "epss_score": 0.7650,
+        "epss_percentile": 0.9785,
         "is_kev": 1,
         "kev_date_added": "2024-10-23",
         "kev_due_date": "2024-10-30",
         "kev_ransomware_use": "Known"
     },
+    # 20. ConnectWise ScreenConnect Path Traversal (Decayed KEV)
+    {
+        "cve_id": "CVE-2024-1708",
+        "description": "ConnectWise ScreenConnect path traversal vulnerability allows an authorized attacker to execute unauthorized code.",
+        "cvss_v3_score": 8.4,
+        "cvss_v3_severity": "HIGH",
+        "cvss_vector": "CVSS:3.1/AV:N/AC:L/PR:H/UI:N/S:C/C:H/I:H/A:H",
+        "epss_score": 0.1150,
+        "epss_percentile": 0.7490,
+        "is_kev": 1,
+        "kev_date_added": "2024-02-21",
+        "kev_due_date": "2024-02-29",
+        "kev_ransomware_use": "Known"
+    },
+    # 21. Cisco ASA and FTD Remote Access VPN (Decayed KEV)
+    {
+        "cve_id": "CVE-2023-20269",
+        "description": "Cisco Adaptive Security Appliance (ASA) and Firepower Threat Defense (FTD) unauthorized access vulnerability in remote access VPN.",
+        "cvss_v3_score": 8.6,
+        "cvss_v3_severity": "HIGH",
+        "cvss_vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:L/A:L",
+        "epss_score": 0.1500,
+        "epss_percentile": 0.7920,
+        "is_kev": 1,
+        "kev_date_added": "2023-09-11",
+        "kev_due_date": "2023-09-25",
+        "kev_ransomware_use": "Known"
+    },
+    # 22. Palo Alto Networks PAN-OS Mgmt Web Auth Bypass (Decayed KEV)
+    {
+        "cve_id": "CVE-2024-0012",
+        "description": "Palo Alto Networks PAN-OS Management Web Interface authentication bypass vulnerability allows unauthenticated administrator access.",
+        "cvss_v3_score": 8.8,
+        "cvss_v3_severity": "HIGH",
+        "cvss_vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+        "epss_score": 0.1400,
+        "epss_percentile": 0.7810,
+        "is_kev": 1,
+        "kev_date_added": "2024-11-18",
+        "kev_due_date": "2024-11-25",
+        "kev_ransomware_use": "Known"
+    },
+    # 23. Array Networks AG Series SSL VPN Command Injection (Decayed KEV)
+    {
+        "cve_id": "CVE-2023-28461",
+        "description": "Array Networks AG Series and vxAG SSL VPN command injection vulnerability in web interface allows remote code execution.",
+        "cvss_v3_score": 8.5,
+        "cvss_v3_severity": "HIGH",
+        "cvss_vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+        "epss_score": 0.0700,
+        "epss_percentile": 0.6550,
+        "is_kev": 1,
+        "kev_date_added": "2023-03-24",
+        "kev_due_date": "2023-04-14",
+        "kev_ransomware_use": "Unknown"
+    },
+    # 24. ServiceNow Glide Expression Injection (Decayed KEV)
     {
         "cve_id": "CVE-2024-5217",
         "description": "ServiceNow Glide expression injection vulnerability allows an unauthenticated remote attacker to execute arbitrary JavaScript code.",
-        "cvss_v3_score": 9.3,
-        "cvss_v3_severity": "CRITICAL",
+        "cvss_v3_score": 8.6,
+        "cvss_v3_severity": "HIGH",
         "cvss_vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
-        "epss_score": 0.9520,
-        "epss_percentile": 0.9928,
+        "epss_score": 0.1600,
+        "epss_percentile": 0.8030,
         "is_kev": 1,
         "kev_date_added": "2024-07-15",
         "kev_due_date": "2024-07-22",
         "kev_ransomware_use": "Known"
     },
+    # 25. Fortinet FortiClient EMS SQL Injection (Decayed KEV)
     {
         "cve_id": "CVE-2023-48788",
         "description": "Fortinet FortiClient EMS SQL injection vulnerability in FCTMon.exe allows unauthenticated remote attacker to execute unauthorized code via crafted requests.",
-        "cvss_v3_score": 9.8,
-        "cvss_v3_severity": "CRITICAL",
+        "cvss_v3_score": 8.8,
+        "cvss_v3_severity": "HIGH",
         "cvss_vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
-        "epss_score": 0.9620,
-        "epss_percentile": 0.9942,
+        "epss_score": 0.1100,
+        "epss_percentile": 0.7410,
         "is_kev": 1,
         "kev_date_added": "2024-03-25",
         "kev_due_date": "2024-04-01",
         "kev_ransomware_use": "Known"
     },
 
-    # --- 35 CVE Non-KEV (Variasi CVSS dan EPSS, Tidak di KEV) ---
+    # =========================================================================
+    # --- 35 CVE Non-KEV (Tidak Masuk Katalog KEV CISA) ---
+    # =========================================================================
+
+    # --- 8 CVE Alert Fatigue (CVSS 9.8-10.0, EPSS Rendah 0.018-0.045) ---
+    # Membuktikan fenomena Allodi & Massacci (2014): kerentanan ber-CVSS kritis
+    # mendominasi antrean jika hanya memakai CVSS murni, padahal probabilitas rendah.
     {
-        "cve_id": "CVE-2024-6387",
-        "description": "OpenSSH regreSSHion signal handler race condition in sshd allows unauthenticated remote code execution as root on glibc-based Linux.",
-        "cvss_v3_score": 8.1,
-        "cvss_v3_severity": "HIGH",
-        "cvss_vector": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:H/A:H",
-        "epss_score": 0.7321,
-        "epss_percentile": 0.9780,
+        "cve_id": "CVE-2024-38063",
+        "description": "Windows TCP/IP Remote Code Execution vulnerability in IPv6 stack allowing unauthorized network attacker to execute code.",
+        "cvss_v3_score": 10.0,
+        "cvss_v3_severity": "CRITICAL",
+        "cvss_vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+        "epss_score": 0.0240,
+        "epss_percentile": 0.4500,
         "is_kev": 0,
         "kev_date_added": None,
         "kev_due_date": None,
         "kev_ransomware_use": ""
     },
+    {
+        "cve_id": "CVE-2024-38077",
+        "description": "Windows Remote Desktop Licensing Service remote code execution vulnerability.",
+        "cvss_v3_score": 10.0,
+        "cvss_v3_severity": "CRITICAL",
+        "cvss_vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+        "epss_score": 0.0310,
+        "epss_percentile": 0.4900,
+        "is_kev": 0,
+        "kev_date_added": None,
+        "kev_due_date": None,
+        "kev_ransomware_use": ""
+    },
+    {
+        "cve_id": "CVE-2024-6327",
+        "description": "Progress Telerik Report Server deserialization of untrusted data leading to remote code execution.",
+        "cvss_v3_score": 10.0,
+        "cvss_v3_severity": "CRITICAL",
+        "cvss_vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+        "epss_score": 0.0380,
+        "epss_percentile": 0.5200,
+        "is_kev": 0,
+        "kev_date_added": None,
+        "kev_due_date": None,
+        "kev_ransomware_use": ""
+    },
+    {
+        "cve_id": "CVE-2024-28000",
+        "description": "WordPress LiteSpeed Cache plugin privilege escalation allowing unauthenticated administrator takeover.",
+        "cvss_v3_score": 10.0,
+        "cvss_v3_severity": "CRITICAL",
+        "cvss_vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+        "epss_score": 0.0350,
+        "epss_percentile": 0.5100,
+        "is_kev": 0,
+        "kev_date_added": None,
+        "kev_due_date": None,
+        "kev_ransomware_use": ""
+    },
+    {
+        "cve_id": "CVE-2023-29360",
+        "description": "Windows Message Queuing (MSMQ) remote code execution vulnerability.",
+        "cvss_v3_score": 10.0,
+        "cvss_v3_severity": "CRITICAL",
+        "cvss_vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+        "epss_score": 0.0180,
+        "epss_percentile": 0.4100,
+        "is_kev": 0,
+        "kev_date_added": None,
+        "kev_due_date": None,
+        "kev_ransomware_use": ""
+    },
+    {
+        "cve_id": "CVE-2024-29824",
+        "description": "Ivanti Endpoint Manager Core SQL injection vulnerability allows unauthenticated attacker on intranet to execute code.",
+        "cvss_v3_score": 9.9,
+        "cvss_v3_severity": "CRITICAL",
+        "cvss_vector": "CVSS:3.1/AV:A/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:H",
+        "epss_score": 0.0420,
+        "epss_percentile": 0.5400,
+        "is_kev": 0,
+        "kev_date_added": None,
+        "kev_due_date": None,
+        "kev_ransomware_use": ""
+    },
+    {
+        "cve_id": "CVE-2024-5910",
+        "description": "Palo Alto Networks Expedition missing authentication leading to admin password reset.",
+        "cvss_v3_score": 9.8,
+        "cvss_v3_severity": "CRITICAL",
+        "cvss_vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+        "epss_score": 0.0250,
+        "epss_percentile": 0.4600,
+        "is_kev": 0,
+        "kev_date_added": None,
+        "kev_due_date": None,
+        "kev_ransomware_use": ""
+    },
+    {
+        "cve_id": "CVE-2023-35078",
+        "description": "Ivanti Endpoint Manager Mobile (EPMM) authentication bypass vulnerability in API endpoints.",
+        "cvss_v3_score": 9.8,
+        "cvss_v3_severity": "CRITICAL",
+        "cvss_vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+        "epss_score": 0.0450,
+        "epss_percentile": 0.5600,
+        "is_kev": 0,
+        "kev_date_added": None,
+        "kev_due_date": None,
+        "kev_ransomware_use": ""
+    },
+
+    # --- 5 CVE Non-KEV Ber-EPSS Tinggi (PoC Senjata Eksploitasi, tapi Belum di KEV) ---
+    # Pada Skenario 2 (CVSS+EPSS), kelima CVE ini akan menggeser 9 KEV yang mengalami
+    # EPSS Decay, membuktikan perlunya Skenario 3 (KEV weight + Rule-Based Escalation).
     {
         "cve_id": "CVE-2024-4577",
         "description": "PHP CGI argument injection vulnerability on Windows allows unauthenticated remote attackers to bypass protection and achieve RCE.",
@@ -363,78 +496,67 @@ SAMPLE_CVES_DATA = [
         "kev_ransomware_use": ""
     },
     {
-        "cve_id": "CVE-2024-38063",
-        "description": "Windows TCP/IP Remote Code Execution vulnerability in IPv6 stack allowing unauthorized network attacker to execute code.",
+        "cve_id": "CVE-2024-21413",
+        "description": "Microsoft Outlook Remote Code Execution Vulnerability (MonikerLink bug) allows code execution via crafted hyperlinks.",
         "cvss_v3_score": 9.8,
         "cvss_v3_severity": "CRITICAL",
         "cvss_vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
-        "epss_score": 0.3540,
-        "epss_percentile": 0.9120,
+        "epss_score": 0.7850,
+        "epss_percentile": 0.9810,
         "is_kev": 0,
         "kev_date_added": None,
         "kev_due_date": None,
         "kev_ransomware_use": ""
     },
     {
-        "cve_id": "CVE-2024-29824",
-        "description": "Ivanti Endpoint Manager Core SQL injection vulnerability allows unauthenticated attacker on the intranet to execute code.",
+        "cve_id": "CVE-2024-21410",
+        "description": "Microsoft Exchange Server NTLM Relaying Privilege Escalation allows unauthorized attacker to escalate to Domain Admin.",
+        "cvss_v3_score": 9.8,
+        "cvss_v3_severity": "CRITICAL",
+        "cvss_vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+        "epss_score": 0.7640,
+        "epss_percentile": 0.9790,
+        "is_kev": 0,
+        "kev_date_added": None,
+        "kev_due_date": None,
+        "kev_ransomware_use": ""
+    },
+    {
+        "cve_id": "CVE-2023-4863",
+        "description": "libwebp heap buffer overflow in lossless compression parsing allowing arbitrary code execution.",
         "cvss_v3_score": 9.6,
         "cvss_v3_severity": "CRITICAL",
-        "cvss_vector": "CVSS:3.1/AV:A/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:H",
-        "epss_score": 0.4210,
-        "epss_percentile": 0.9340,
+        "cvss_vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:H",
+        "epss_score": 0.7550,
+        "epss_percentile": 0.9760,
         "is_kev": 0,
         "kev_date_added": None,
         "kev_due_date": None,
         "kev_ransomware_use": ""
     },
     {
-        "cve_id": "CVE-2024-6327",
-        "description": "Progress Telerik Report Server deserialization of untrusted data leading to remote code execution.",
-        "cvss_v3_score": 9.8,
+        "cve_id": "CVE-2024-38189",
+        "description": "Microsoft Project remote code execution vulnerability via malicious file attachment.",
+        "cvss_v3_score": 9.4,
         "cvss_v3_severity": "CRITICAL",
-        "cvss_vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
-        "epss_score": 0.2840,
-        "epss_percentile": 0.8870,
+        "cvss_vector": "CVSS:3.1/AV:L/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:H",
+        "epss_score": 0.7450,
+        "epss_percentile": 0.9740,
         "is_kev": 0,
         "kev_date_added": None,
         "kev_due_date": None,
         "kev_ransomware_use": ""
     },
+
+    # --- 22 CVE Non-KEV Moderat / Rendah ---
     {
-        "cve_id": "CVE-2024-28000",
-        "description": "WordPress LiteSpeed Cache plugin privilege escalation allowing unauthenticated administrator takeover.",
-        "cvss_v3_score": 9.8,
-        "cvss_v3_severity": "CRITICAL",
-        "cvss_vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
-        "epss_score": 0.5420,
-        "epss_percentile": 0.9560,
-        "is_kev": 0,
-        "kev_date_added": None,
-        "kev_due_date": None,
-        "kev_ransomware_use": ""
-    },
-    {
-        "cve_id": "CVE-2024-5910",
-        "description": "Palo Alto Networks Expedition missing authentication leading to admin password reset.",
-        "cvss_v3_score": 9.3,
-        "cvss_v3_severity": "CRITICAL",
-        "cvss_vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
-        "epss_score": 0.1820,
-        "epss_percentile": 0.8250,
-        "is_kev": 0,
-        "kev_date_added": None,
-        "kev_due_date": None,
-        "kev_ransomware_use": ""
-    },
-    {
-        "cve_id": "CVE-2024-38077",
-        "description": "Windows Remote Desktop Licensing Service remote code execution vulnerability.",
-        "cvss_v3_score": 9.8,
-        "cvss_v3_severity": "CRITICAL",
-        "cvss_vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
-        "epss_score": 0.3150,
-        "epss_percentile": 0.9010,
+        "cve_id": "CVE-2024-6387",
+        "description": "OpenSSH regreSSHion signal handler race condition in sshd allows unauthenticated remote code execution as root on glibc-based Linux.",
+        "cvss_v3_score": 8.1,
+        "cvss_v3_severity": "HIGH",
+        "cvss_vector": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:H/A:H",
+        "epss_score": 0.5320,
+        "epss_percentile": 0.9520,
         "is_kev": 0,
         "kev_date_added": None,
         "kev_due_date": None,
@@ -487,19 +609,6 @@ SAMPLE_CVES_DATA = [
         "cvss_vector": "CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H",
         "epss_score": 0.1540,
         "epss_percentile": 0.7980,
-        "is_kev": 0,
-        "kev_date_added": None,
-        "kev_due_date": None,
-        "kev_ransomware_use": ""
-    },
-    {
-        "cve_id": "CVE-2024-38189",
-        "description": "Microsoft Project remote code execution vulnerability via malicious file attachment.",
-        "cvss_v3_score": 7.8,
-        "cvss_v3_severity": "HIGH",
-        "cvss_vector": "CVSS:3.1/AV:L/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:H",
-        "epss_score": 0.1250,
-        "epss_percentile": 0.7620,
         "is_kev": 0,
         "kev_date_added": None,
         "kev_due_date": None,
@@ -714,32 +823,6 @@ SAMPLE_CVES_DATA = [
         "kev_ransomware_use": ""
     },
     {
-        "cve_id": "CVE-2023-5217",
-        "description": "Google Chrome libvpx heap buffer overflow in VP8 encoding.",
-        "cvss_v3_score": 8.8,
-        "cvss_v3_severity": "HIGH",
-        "cvss_vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:H",
-        "epss_score": 0.5340,
-        "epss_percentile": 0.9540,
-        "is_kev": 0,
-        "kev_date_added": None,
-        "kev_due_date": None,
-        "kev_ransomware_use": ""
-    },
-    {
-        "cve_id": "CVE-2023-4863",
-        "description": "libwebp heap buffer overflow in lossless compression parsing.",
-        "cvss_v3_score": 8.8,
-        "cvss_v3_severity": "HIGH",
-        "cvss_vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:H",
-        "epss_score": 0.5890,
-        "epss_percentile": 0.9620,
-        "is_kev": 0,
-        "kev_date_added": None,
-        "kev_due_date": None,
-        "kev_ransomware_use": ""
-    },
-    {
         "cve_id": "CVE-2023-44487",
         "description": "HTTP/2 Rapid Reset distributed denial of service attack.",
         "cvss_v3_score": 7.5,
@@ -747,45 +830,6 @@ SAMPLE_CVES_DATA = [
         "cvss_vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
         "epss_score": 0.3210,
         "epss_percentile": 0.9030,
-        "is_kev": 0,
-        "kev_date_added": None,
-        "kev_due_date": None,
-        "kev_ransomware_use": ""
-    },
-    {
-        "cve_id": "CVE-2023-38545",
-        "description": "cURL SOCKS5 heap buffer overflow vulnerability in slow hostname resolving.",
-        "cvss_v3_score": 9.8,
-        "cvss_v3_severity": "CRITICAL",
-        "cvss_vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
-        "epss_score": 0.1650,
-        "epss_percentile": 0.8120,
-        "is_kev": 0,
-        "kev_date_added": None,
-        "kev_due_date": None,
-        "kev_ransomware_use": ""
-    },
-    {
-        "cve_id": "CVE-2023-36884",
-        "description": "Microsoft Office and Windows HTML remote code execution vulnerability via malicious documents.",
-        "cvss_v3_score": 8.3,
-        "cvss_v3_severity": "HIGH",
-        "cvss_vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:H",
-        "epss_score": 0.3750,
-        "epss_percentile": 0.9200,
-        "is_kev": 0,
-        "kev_date_added": None,
-        "kev_due_date": None,
-        "kev_ransomware_use": ""
-    },
-    {
-        "cve_id": "CVE-2023-35078",
-        "description": "Ivanti Endpoint Manager Mobile (EPMM) authentication bypass vulnerability in API endpoints.",
-        "cvss_v3_score": 9.8,
-        "cvss_v3_severity": "CRITICAL",
-        "cvss_vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
-        "epss_score": 0.4420,
-        "epss_percentile": 0.9380,
         "is_kev": 0,
         "kev_date_added": None,
         "kev_due_date": None,

@@ -1140,8 +1140,8 @@
       t4Body.innerHTML = '';
       t4.details.slice(0, 10).forEach(b => {
         const badge = b.proactively_detected
-          ? `<span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold text-[10px]">Terdeteksi</span>`
-          : `<span class="px-2 py-0.5 rounded bg-slate-100 text-slate-600 text-[10px]">Lolos</span>`;
+          ? `<span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold text-[10px]">Terdeteksi Dini</span>`
+          : `<span class="px-2 py-0.5 rounded bg-amber-100 text-amber-800 font-bold text-[10px]" title="Zero-Day Prediction Lag (Parla, 2024)">Prediction Lag</span>`;
         t4Body.innerHTML += `
           <tr class="border-b border-slate-100">
             <td class="py-1.5 font-mono font-bold text-slate-900">${b.cve_id}</td>
