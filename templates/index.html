@@ -180,21 +180,27 @@
 
             <div>
               <label class="block text-xs font-bold text-slate-800 uppercase tracking-wider mb-2">Konfigurasi Bobot (CVSS : EPSS : KEV):</label>
-              <div class="grid grid-cols-3 gap-1.5 text-xs">
-                <label class="p-2 bg-white border border-slate-200 rounded-lg text-center cursor-pointer hover:border-sky-400 transition">
-                  <input type="radio" name="weightOption" value="1" checked class="text-sky-600 focus:ring-sky-500">
-                  <span class="block font-bold text-slate-800 mt-1">50:30:20</span>
-                  <span class="text-[10px] text-slate-500">Seimbang</span>
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs">
+                <label class="p-2.5 bg-white border border-slate-200 rounded-lg text-center cursor-pointer hover:border-sky-400 transition flex flex-col justify-between">
+                  <div>
+                    <input type="radio" name="weightOption" value="1" checked class="text-sky-600 focus:ring-sky-500">
+                    <span class="block font-bold text-slate-800 mt-1">50:30:20</span>
+                  </div>
+                  <span class="text-[10px] text-slate-500 mt-1 leading-tight">Fokus Keparahan Teknis (Severity-Focused)</span>
                 </label>
-                <label class="p-2 bg-white border border-slate-200 rounded-lg text-center cursor-pointer hover:border-sky-400 transition">
-                  <input type="radio" name="weightOption" value="2" class="text-sky-600 focus:ring-sky-500">
-                  <span class="block font-bold text-slate-800 mt-1">30:40:30</span>
-                  <span class="text-[10px] text-slate-500">Dinamis</span>
+                <label class="p-2.5 bg-white border border-slate-200 rounded-lg text-center cursor-pointer hover:border-sky-400 transition flex flex-col justify-between">
+                  <div>
+                    <input type="radio" name="weightOption" value="2" class="text-sky-600 focus:ring-sky-500">
+                    <span class="block font-bold text-slate-800 mt-1">30:40:30</span>
+                  </div>
+                  <span class="text-[10px] text-slate-500 mt-1 leading-tight">Seimbang / Fokus Probabilitas (Balanced)</span>
                 </label>
-                <label class="p-2 bg-white border border-slate-200 rounded-lg text-center cursor-pointer hover:border-sky-400 transition">
-                  <input type="radio" name="weightOption" value="3" class="text-sky-600 focus:ring-sky-500">
-                  <span class="block font-bold text-slate-800 mt-1">20:40:40</span>
-                  <span class="text-[10px] text-slate-500">Aktif</span>
+                <label class="p-2.5 bg-white border border-slate-200 rounded-lg text-center cursor-pointer hover:border-sky-400 transition flex flex-col justify-between">
+                  <div>
+                    <input type="radio" name="weightOption" value="3" class="text-sky-600 focus:ring-sky-500">
+                    <span class="block font-bold text-slate-800 mt-1">20:40:40</span>
+                  </div>
+                  <span class="text-[10px] text-slate-500 mt-1 leading-tight">Fokus Ancaman Aktif (Threat-Focused)</span>
                 </label>
               </div>
             </div>
@@ -428,9 +434,10 @@
                   <thead>
                     <tr class="border-b border-slate-200 text-slate-500 font-semibold text-[11px]">
                       <th class="py-1.5">Threshold</th>
-                      <th class="py-1.5 text-center">Metode Utama</th>
-                      <th class="py-1.5 text-center">TOPSIS</th>
-                      <th class="py-1.5 text-center">CVSS Saja</th>
+                      <th class="py-1.5 text-center">S1 (CVSS Saja)</th>
+                      <th class="py-1.5 text-center">S2 (CVSS + EPSS)</th>
+                      <th class="py-1.5 text-center text-sky-700">S3 (Metode Utama)</th>
+                      <th class="py-1.5 text-center text-purple-700">S3 (TOPSIS)</th>
                     </tr>
                   </thead>
                   <tbody id="test2TableBody" class="divide-y divide-slate-100">
@@ -462,9 +469,10 @@
                   <thead>
                     <tr class="border-b border-slate-200 text-slate-500 font-semibold text-[11px]">
                       <th class="py-1.5">Threshold</th>
-                      <th class="py-1.5 text-center">Metode Utama</th>
-                      <th class="py-1.5 text-center">TOPSIS</th>
-                      <th class="py-1.5 text-center">CVSS Saja</th>
+                      <th class="py-1.5 text-center">S1 (CVSS Saja)</th>
+                      <th class="py-1.5 text-center">S2 (CVSS + EPSS)</th>
+                      <th class="py-1.5 text-center text-sky-700">S3 (Metode Utama)</th>
+                      <th class="py-1.5 text-center text-purple-700">S3 (TOPSIS)</th>
                     </tr>
                   </thead>
                   <tbody id="test3TableBody" class="divide-y divide-slate-100">
@@ -535,9 +543,10 @@
                 <thead>
                   <tr class="border-b border-slate-200 text-slate-500 font-semibold text-[11px]">
                     <th class="py-2">Metrik Kualitas</th>
-                    <th class="py-2 text-center">Metode Utama</th>
-                    <th class="py-2 text-center">TOPSIS</th>
-                    <th class="py-2 text-center">CVSS Saja</th>
+                    <th class="py-2 text-center">S1 (CVSS Saja)</th>
+                    <th class="py-2 text-center">S2 (CVSS + EPSS)</th>
+                    <th class="py-2 text-center text-sky-700">S3 (Metode Utama)</th>
+                    <th class="py-2 text-center text-purple-700">S3 (TOPSIS)</th>
                     <th class="py-2">Keterangan</th>
                   </tr>
                 </thead>
@@ -1098,9 +1107,10 @@
         t2Body.innerHTML += `
           <tr class="border-b border-slate-100">
             <td class="py-1.5 font-semibold text-slate-800">Recall@${m.k}</td>
-            <td class="py-1.5 text-center font-bold text-sky-600">${m.recall_weighted_pct}% (${m.kev_caught_weighted}/${m.total_kev})</td>
-            <td class="py-1.5 text-center text-purple-600">${m.recall_topsis_pct}%</td>
-            <td class="py-1.5 text-center text-slate-600">${m.recall_cvss_pct}%</td>
+            <td class="py-1.5 text-center text-slate-600">${m.recall_s1_pct}%</td>
+            <td class="py-1.5 text-center text-amber-600 font-medium">${m.recall_s2_pct}%</td>
+            <td class="py-1.5 text-center font-bold text-sky-600">${m.recall_s3_w_pct || m.recall_weighted_pct}% (${m.kev_caught_s3_w || m.kev_caught_weighted}/${m.total_kev})</td>
+            <td class="py-1.5 text-center text-purple-600 font-medium">${m.recall_s3_t_pct || m.recall_topsis_pct}%</td>
           </tr>
         `;
       });
@@ -1114,9 +1124,10 @@
         t3Body.innerHTML += `
           <tr class="border-b border-slate-100">
             <td class="py-1.5 font-semibold text-slate-800">Precision@${m.k}</td>
-            <td class="py-1.5 text-center font-bold text-sky-600">${m.precision_weighted_pct}%</td>
-            <td class="py-1.5 text-center text-purple-600">${m.precision_topsis_pct}%</td>
-            <td class="py-1.5 text-center text-slate-600">${m.precision_cvss_pct}%</td>
+            <td class="py-1.5 text-center text-slate-600">${m.precision_s1_pct}%</td>
+            <td class="py-1.5 text-center text-amber-600 font-medium">${m.precision_s2_pct}%</td>
+            <td class="py-1.5 text-center font-bold text-sky-600">${m.precision_s3_w_pct || m.precision_weighted_pct}%</td>
+            <td class="py-1.5 text-center text-purple-600 font-medium">${m.precision_s3_t_pct || m.precision_topsis_pct}%</td>
           </tr>
         `;
       });
@@ -1150,12 +1161,17 @@
       const t5Body = document.getElementById('test5TableBody');
       t5Body.innerHTML = '';
       t5.metrics.forEach(m => {
+        const s1Val = m.s1_cvss !== undefined ? m.s1_cvss : m.cvss_only;
+        const s2Val = m.s2_epss !== undefined ? m.s2_epss : '-';
+        const s3WVal = m.s3_weighted !== undefined ? m.s3_weighted : m.weighted;
+        const s3TVal = m.s3_topsis !== undefined ? m.s3_topsis : m.topsis;
         t5Body.innerHTML += `
           <tr class="border-b border-slate-100">
             <td class="py-1.5 font-semibold text-slate-800">${m.metric}</td>
-            <td class="py-1.5 text-center font-bold text-sky-600">${m.weighted}</td>
-            <td class="py-1.5 text-center text-purple-600">${m.topsis}</td>
-            <td class="py-1.5 text-center text-slate-600">${m.cvss_only}</td>
+            <td class="py-1.5 text-center text-slate-600">${s1Val}</td>
+            <td class="py-1.5 text-center text-amber-600 font-medium">${s2Val}</td>
+            <td class="py-1.5 text-center font-bold text-sky-600">${s3WVal}</td>
+            <td class="py-1.5 text-center text-purple-600 font-medium">${s3TVal}</td>
             <td class="py-1.5 text-[11px] text-slate-500">${m.interpretation}</td>
           </tr>
         `;
@@ -1248,9 +1264,10 @@
         data: {
           labels: metrics.map(m => `@${m.k}`),
           datasets: [
-            { label: 'Metode Utama', data: metrics.map(m => m.recall_weighted_pct), backgroundColor: '#0284c7' },
-            { label: 'TOPSIS', data: metrics.map(m => m.recall_topsis_pct), backgroundColor: '#a855f7' },
-            { label: 'CVSS Saja', data: metrics.map(m => m.recall_cvss_pct), backgroundColor: '#94a3b8' }
+            { label: 'S1: CVSS Saja', data: metrics.map(m => m.recall_s1_pct !== undefined ? m.recall_s1_pct : m.recall_cvss_pct), backgroundColor: '#94a3b8' },
+            { label: 'S2: CVSS + EPSS', data: metrics.map(m => m.recall_s2_pct !== undefined ? m.recall_s2_pct : 0), backgroundColor: '#f59e0b' },
+            { label: 'S3: Metode Utama', data: metrics.map(m => m.recall_s3_w_pct || m.recall_weighted_pct), backgroundColor: '#0284c7' },
+            { label: 'S3: TOPSIS', data: metrics.map(m => m.recall_s3_t_pct || m.recall_topsis_pct), backgroundColor: '#a855f7' }
           ]
         },
         options: {
@@ -1270,9 +1287,10 @@
         data: {
           labels: metrics.map(m => `@${m.k}`),
           datasets: [
-            { label: 'Metode Utama', data: metrics.map(m => m.precision_weighted_pct), backgroundColor: '#0284c7' },
-            { label: 'TOPSIS', data: metrics.map(m => m.precision_topsis_pct), backgroundColor: '#a855f7' },
-            { label: 'CVSS Saja', data: metrics.map(m => m.precision_cvss_pct), backgroundColor: '#94a3b8' }
+            { label: 'S1: CVSS Saja', data: metrics.map(m => m.precision_s1_pct !== undefined ? m.precision_s1_pct : m.precision_cvss_pct), backgroundColor: '#94a3b8' },
+            { label: 'S2: CVSS + EPSS', data: metrics.map(m => m.precision_s2_pct !== undefined ? m.precision_s2_pct : 0), backgroundColor: '#f59e0b' },
+            { label: 'S3: Metode Utama', data: metrics.map(m => m.precision_s3_w_pct || m.precision_weighted_pct), backgroundColor: '#0284c7' },
+            { label: 'S3: TOPSIS', data: metrics.map(m => m.precision_s3_t_pct || m.precision_topsis_pct), backgroundColor: '#a855f7' }
           ]
         },
         options: {
@@ -1293,9 +1311,10 @@
         data: {
           labels: filtered.map(m => m.metric),
           datasets: [
-            { label: 'Metode Utama', data: filtered.map(m => m.weighted), borderColor: '#0284c7', backgroundColor: 'rgba(2,132,199,0.15)' },
-            { label: 'TOPSIS', data: filtered.map(m => m.topsis), borderColor: '#a855f7', backgroundColor: 'rgba(168,85,247,0.15)' },
-            { label: 'CVSS Saja', data: filtered.map(m => m.cvss_only), borderColor: '#94a3b8', backgroundColor: 'rgba(148,163,184,0.15)' }
+            { label: 'S1: CVSS Saja', data: filtered.map(m => m.s1_cvss !== undefined ? m.s1_cvss : m.cvss_only), borderColor: '#94a3b8', backgroundColor: 'rgba(148,163,184,0.15)' },
+            { label: 'S2: CVSS + EPSS', data: filtered.map(m => m.s2_epss !== undefined ? m.s2_epss : 0), borderColor: '#f59e0b', backgroundColor: 'rgba(245,158,11,0.15)' },
+            { label: 'S3: Metode Utama', data: filtered.map(m => m.s3_weighted !== undefined ? m.s3_weighted : m.weighted), borderColor: '#0284c7', backgroundColor: 'rgba(2,132,199,0.15)' },
+            { label: 'S3: TOPSIS', data: filtered.map(m => m.s3_topsis !== undefined ? m.s3_topsis : m.topsis), borderColor: '#a855f7', backgroundColor: 'rgba(168,85,247,0.15)' }
           ]
         },
         options: {

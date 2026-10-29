@@ -113,18 +113,19 @@
       "3": { "name": "CVSS + EPSS + KEV", "features": ["cvss", "epss", "kev"], "recommended": true }
     },
     "weight_configurations": {
-      "1": { "raw": [0.50, 0.30, 0.20], "label": "Balanced (50:30:20)" },
-      "2": { "raw": [0.30, 0.40, 0.30], "label": "Dynamic Exploit Focus (30:40:30)" },
-      "3": { "raw": [0.20, 0.40, 0.40], "label": "Active Threat Focus (20:40:40)" }
+      "1": { "raw": [0.50, 0.30, 0.20], "label": "Fokus Keparahan Teknis (Severity-Focused) (50:30:20)" },
+      "2": { "raw": [0.30, 0.40, 0.30], "label": "Seimbang / Fokus Probabilitas (Balanced) (30:40:30)" },
+      "3": { "raw": [0.20, 0.40, 0.40], "label": "Fokus Ancaman Aktif (Threat-Focused) (20:40:40)" }
     },
     "weight_redistribution_policy": "If scenario excludes a feature, its weight is redistributed proportionally among active features to preserve sum(weights) == 1.0",
     "primary_method": {
       "name": "Weighted Risk Scoring + Rule-Based Escalation",
       "linear_formula": "weighted_score = (w_cvss * cvss_norm + w_epss * epss_norm + w_kev * kev_flag) * 100",
       "rule_based_escalation": {
-        "condition": "is_kev == 1 and weighted_score < 85.0",
-        "action": "rule_based_score = max(weighted_score, 85.0 + epss_norm * 10.0)",
-        "scientific_rationale": "Prevents false-negative downgrade caused by EPSS statistical decay or prediction lag on confirmed actively exploited threats."
+        "condition": "scenario == 3 and is_kev == 1",
+        "action": "rule_based_score = round(min(100.0, max(weighted_score, 85.0 + (weighted_score / 100.0) * 15.0)), 2)",
+        "non_scenario_3_action": "rule_based_score = weighted_score (prevents data leakage in Scenarios 1 and 2)",
+        "scientific_rationale": "Monotonically guarantees KEV items escalate to Critical (>= 85.0) without causing rank inversion among KEV items, while preserving isolation in Scenarios 1 and 2 during ablation testing."
       }
     },
     "benchmark_method": {
@@ -154,12 +155,22 @@
     "test_2_kev_recall": {
       "cutoffs": [10, 20, 50],
       "formula": "Recall@K = (Number of KEVs in Top-K) / Total KEVs",
-      "models_compared": ["Proposed Method", "TOPSIS", "CVSS-Only Baseline"]
+      "models_compared": [
+        "Skenario 1 (CVSS Saja - Baseline)",
+        "Skenario 2 (CVSS + EPSS)",
+        "Skenario 3 (CVSS + EPSS + KEV - Metode Utama Weighted+Rule)",
+        "Skenario 3 (CVSS + EPSS + KEV - MCDM TOPSIS)"
+      ]
     },
     "test_3_precision_at_k": {
       "cutoffs": [10, 20, 50],
       "formula": "Precision@K = (Number of KEVs in Top-K) / K",
-      "models_compared": ["Proposed Method", "TOPSIS", "CVSS-Only Baseline"]
+      "models_compared": [
+        "Skenario 1 (CVSS Saja - Baseline)",
+        "Skenario 2 (CVSS + EPSS)",
+        "Skenario 3 (CVSS + EPSS + KEV - Metode Utama Weighted+Rule)",
+        "Skenario 3 (CVSS + EPSS + KEV - MCDM TOPSIS)"
+      ]
     },
     "test_4_historical_backtesting": {
       "description": "Evaluates proactive detection by querying historical EPSS 14 days prior to CISA KEV publication date.",
@@ -172,6 +183,12 @@
         "NDCG@50",
         "MRR (Mean Reciprocal Rank: 1 / rank_of_first_kev)",
         "Average Rank of KEV items"
+      ],
+      "models_compared": [
+        "Skenario 1 (CVSS Saja - Baseline)",
+        "Skenario 2 (CVSS + EPSS)",
+        "Skenario 3 (CVSS + EPSS + KEV - Metode Utama Weighted+Rule)",
+        "Skenario 3 (CVSS + EPSS + KEV - MCDM TOPSIS)"
       ]
     },
     "test_6_ablation_testing": {

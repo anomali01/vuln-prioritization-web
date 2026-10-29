@@ -81,7 +81,7 @@ def _simulate_run(vuln_data, scenario, weight_config):
         kev_flag = int(v.get("is_kev", 0))
         
         w_score = _compute_weighted_score(v, weights)
-        rb_score = _apply_rule_based_enhancement(w_score, kev_flag)
+        rb_score = _apply_rule_based_enhancement(w_score, kev_flag, scenario)
         
         sim_results.append({
             "cve_id": v["cve_id"],
@@ -189,16 +189,24 @@ def evaluate_kev_recall(vuln_data, scenario=3, weight_config=1):
     """
     (2) KEV Recall Testing:
     Recall@K = (Jumlah KEV teridentifikasi pada Top-K) / (Total KEV)
-    Dihitung untuk K = 10, 20, 50 pada Metode Utama, TOPSIS, dan Baseline CVSS.
+    Membandingkan 4 Model Komparatif:
+      a) Skenario 1 (CVSS Saja - Baseline)
+      b) Skenario 2 (CVSS + EPSS)
+      c) Skenario 3 (CVSS + EPSS + KEV - Metode Utama Weighted+Rule)
+      d) Skenario 3 (CVSS + EPSS + KEV - MCDM TOPSIS)
     """
-    sim_data = _simulate_run(vuln_data, scenario, weight_config)
     total_kev = sum(1 for v in vuln_data if v.get("is_kev", 0) == 1)
     
-    # Sortings
-    sorted_weighted = sorted(sim_data, key=lambda x: x["final_rank_weighted"])
-    sorted_topsis = sorted(sim_data, key=lambda x: x["final_rank_topsis"])
-    # CVSS baseline (descending CVSS)
-    sorted_cvss = sorted(sim_data, key=lambda x: x["cvss_v3_score"], reverse=True)
+    # Simulasi 3 Skenario untuk perbandingan 4 model
+    sim_s1 = _simulate_run(vuln_data, scenario=1, weight_config=weight_config)
+    sim_s2 = _simulate_run(vuln_data, scenario=2, weight_config=weight_config)
+    sim_s3 = _simulate_run(vuln_data, scenario=3, weight_config=weight_config)
+    
+    # Peringkat masing-masing model
+    sorted_s1 = sorted(sim_s1, key=lambda x: x["final_rank_weighted"])
+    sorted_s2 = sorted(sim_s2, key=lambda x: x["final_rank_weighted"])
+    sorted_s3_w = sorted(sim_s3, key=lambda x: x["final_rank_weighted"])
+    sorted_s3_t = sorted(sim_s3, key=lambda x: x["final_rank_topsis"])
     
     k_values = [10, 20, 50]
     metrics = []
@@ -206,31 +214,46 @@ def evaluate_kev_recall(vuln_data, scenario=3, weight_config=1):
     for k in k_values:
         k_capped = min(k, len(vuln_data))
         
-        kev_weighted = sum(1 for item in sorted_weighted[:k_capped] if item["is_kev"] == 1)
-        kev_topsis = sum(1 for item in sorted_topsis[:k_capped] if item["is_kev"] == 1)
-        kev_cvss = sum(1 for item in sorted_cvss[:k_capped] if item["is_kev"] == 1)
+        kev_s1 = sum(1 for item in sorted_s1[:k_capped] if item["is_kev"] == 1)
+        kev_s2 = sum(1 for item in sorted_s2[:k_capped] if item["is_kev"] == 1)
+        kev_s3_w = sum(1 for item in sorted_s3_w[:k_capped] if item["is_kev"] == 1)
+        kev_s3_t = sum(1 for item in sorted_s3_t[:k_capped] if item["is_kev"] == 1)
         
-        recall_weighted = round(kev_weighted / total_kev, 4) if total_kev > 0 else 0.0
-        recall_topsis = round(kev_topsis / total_kev, 4) if total_kev > 0 else 0.0
-        recall_cvss = round(kev_cvss / total_kev, 4) if total_kev > 0 else 0.0
+        rec_s1 = round(kev_s1 / total_kev, 4) if total_kev > 0 else 0.0
+        rec_s2 = round(kev_s2 / total_kev, 4) if total_kev > 0 else 0.0
+        rec_s3_w = round(kev_s3_w / total_kev, 4) if total_kev > 0 else 0.0
+        rec_s3_t = round(kev_s3_t / total_kev, 4) if total_kev > 0 else 0.0
         
         metrics.append({
             "k": k,
-            "kev_caught_weighted": kev_weighted,
-            "recall_weighted": recall_weighted,
-            "recall_weighted_pct": round(recall_weighted * 100, 2),
-            "kev_caught_topsis": kev_topsis,
-            "recall_topsis": recall_topsis,
-            "recall_topsis_pct": round(recall_topsis * 100, 2),
-            "kev_caught_cvss": kev_cvss,
-            "recall_cvss": recall_cvss,
-            "recall_cvss_pct": round(recall_cvss * 100, 2),
+            # Model a: Skenario 1 (CVSS Saja - Baseline)
+            "kev_caught_s1": kev_s1,
+            "recall_s1": rec_s1,
+            "recall_s1_pct": round(rec_s1 * 100, 2),
+            "recall_cvss_pct": round(rec_s1 * 100, 2), # Alias
+            "kev_caught_cvss": kev_s1, # Alias
+            # Model b: Skenario 2 (CVSS + EPSS)
+            "kev_caught_s2": kev_s2,
+            "recall_s2": rec_s2,
+            "recall_s2_pct": round(rec_s2 * 100, 2),
+            # Model c: Skenario 3 (Metode Utama Weighted+Rule)
+            "kev_caught_s3_w": kev_s3_w,
+            "recall_s3_w": rec_s3_w,
+            "recall_s3_w_pct": round(rec_s3_w * 100, 2),
+            "recall_weighted_pct": round(rec_s3_w * 100, 2), # Alias
+            "kev_caught_weighted": kev_s3_w, # Alias
+            # Model d: Skenario 3 (MCDM TOPSIS)
+            "kev_caught_s3_t": kev_s3_t,
+            "recall_s3_t": rec_s3_t,
+            "recall_s3_t_pct": round(rec_s3_t * 100, 2),
+            "recall_topsis_pct": round(rec_s3_t * 100, 2), # Alias
+            "kev_caught_topsis": kev_s3_t, # Alias
             "total_kev": total_kev
         })
 
     return {
         "test_name": "KEV Recall Testing",
-        "description": "Mengukur persentase kerentanan eksploitasi aktif (KEV) yang berhasil terjaring pada Top-K peringkat.",
+        "description": "Perbandingan komprehensif 4 model: Mengukur persentase kerentanan eksploitasi aktif (KEV) yang berhasil terjaring pada Top-K peringkat.",
         "total_kev": total_kev,
         "metrics": metrics
     }
@@ -244,14 +267,22 @@ def evaluate_precision_at_k(vuln_data, scenario=3, weight_config=1):
     """
     (3) Precision@K Testing:
     Precision@K = (Jumlah KEV pada Top-K) / K
-    Dihitung untuk K = 10, 20, 50 pada Metode Utama, TOPSIS, dan Baseline CVSS.
+    Membandingkan 4 Model Komparatif:
+      a) Skenario 1 (CVSS Saja - Baseline)
+      b) Skenario 2 (CVSS + EPSS)
+      c) Skenario 3 (CVSS + EPSS + KEV - Metode Utama Weighted+Rule)
+      d) Skenario 3 (CVSS + EPSS + KEV - MCDM TOPSIS)
     """
-    sim_data = _simulate_run(vuln_data, scenario, weight_config)
     total_kev = sum(1 for v in vuln_data if v.get("is_kev", 0) == 1)
     
-    sorted_weighted = sorted(sim_data, key=lambda x: x["final_rank_weighted"])
-    sorted_topsis = sorted(sim_data, key=lambda x: x["final_rank_topsis"])
-    sorted_cvss = sorted(sim_data, key=lambda x: x["cvss_v3_score"], reverse=True)
+    sim_s1 = _simulate_run(vuln_data, scenario=1, weight_config=weight_config)
+    sim_s2 = _simulate_run(vuln_data, scenario=2, weight_config=weight_config)
+    sim_s3 = _simulate_run(vuln_data, scenario=3, weight_config=weight_config)
+    
+    sorted_s1 = sorted(sim_s1, key=lambda x: x["final_rank_weighted"])
+    sorted_s2 = sorted(sim_s2, key=lambda x: x["final_rank_weighted"])
+    sorted_s3_w = sorted(sim_s3, key=lambda x: x["final_rank_weighted"])
+    sorted_s3_t = sorted(sim_s3, key=lambda x: x["final_rank_topsis"])
     
     k_values = [10, 20, 50]
     metrics = []
@@ -261,31 +292,46 @@ def evaluate_precision_at_k(vuln_data, scenario=3, weight_config=1):
         if k_capped == 0:
             continue
             
-        kev_weighted = sum(1 for item in sorted_weighted[:k_capped] if item["is_kev"] == 1)
-        kev_topsis = sum(1 for item in sorted_topsis[:k_capped] if item["is_kev"] == 1)
-        kev_cvss = sum(1 for item in sorted_cvss[:k_capped] if item["is_kev"] == 1)
+        kev_s1 = sum(1 for item in sorted_s1[:k_capped] if item["is_kev"] == 1)
+        kev_s2 = sum(1 for item in sorted_s2[:k_capped] if item["is_kev"] == 1)
+        kev_s3_w = sum(1 for item in sorted_s3_w[:k_capped] if item["is_kev"] == 1)
+        kev_s3_t = sum(1 for item in sorted_s3_t[:k_capped] if item["is_kev"] == 1)
         
-        prec_weighted = round(kev_weighted / k_capped, 4)
-        prec_topsis = round(kev_topsis / k_capped, 4)
-        prec_cvss = round(kev_cvss / k_capped, 4)
+        prec_s1 = round(kev_s1 / k_capped, 4)
+        prec_s2 = round(kev_s2 / k_capped, 4)
+        prec_s3_w = round(kev_s3_w / k_capped, 4)
+        prec_s3_t = round(kev_s3_t / k_capped, 4)
         
         metrics.append({
             "k": k,
             "eval_k": k_capped,
-            "kev_caught_weighted": kev_weighted,
-            "precision_weighted": prec_weighted,
-            "precision_weighted_pct": round(prec_weighted * 100, 2),
-            "kev_caught_topsis": kev_topsis,
-            "precision_topsis": prec_topsis,
-            "precision_topsis_pct": round(prec_topsis * 100, 2),
-            "kev_caught_cvss": kev_cvss,
-            "precision_cvss": prec_cvss,
-            "precision_cvss_pct": round(prec_cvss * 100, 2),
+            # Model a: Skenario 1 (CVSS Saja - Baseline)
+            "kev_caught_s1": kev_s1,
+            "precision_s1": prec_s1,
+            "precision_s1_pct": round(prec_s1 * 100, 2),
+            "precision_cvss_pct": round(prec_s1 * 100, 2), # Alias
+            "kev_caught_cvss": kev_s1, # Alias
+            # Model b: Skenario 2 (CVSS + EPSS)
+            "kev_caught_s2": kev_s2,
+            "precision_s2": prec_s2,
+            "precision_s2_pct": round(prec_s2 * 100, 2),
+            # Model c: Skenario 3 (Metode Utama Weighted+Rule)
+            "kev_caught_s3_w": kev_s3_w,
+            "precision_s3_w": prec_s3_w,
+            "precision_s3_w_pct": round(prec_s3_w * 100, 2),
+            "precision_weighted_pct": round(prec_s3_w * 100, 2), # Alias
+            "kev_caught_weighted": kev_s3_w, # Alias
+            # Model d: Skenario 3 (MCDM TOPSIS)
+            "kev_caught_s3_t": kev_s3_t,
+            "precision_s3_t": prec_s3_t,
+            "precision_s3_t_pct": round(prec_s3_t * 100, 2),
+            "precision_topsis_pct": round(prec_s3_t * 100, 2), # Alias
+            "kev_caught_topsis": kev_s3_t, # Alias
         })
 
     return {
         "test_name": "Precision@K Testing",
-        "description": "Mengukur proporsi kerentanan KEV dari seluruh slot remedi Top-K yang dialokasikan.",
+        "description": "Perbandingan komprehensif 4 model: Mengukur proporsi kerentanan KEV dari seluruh slot remedi Top-K yang dialokasikan.",
         "total_kev": total_kev,
         "metrics": metrics
     }
@@ -381,27 +427,23 @@ def evaluate_ranking_quality(vuln_data, scenario=3, weight_config=1):
     """
     (5) Ranking Quality Testing:
     Menghitung NDCG@10, NDCG@20, NDCG@50, Mean Reciprocal Rank (MRR),
-    dan Average Rank KEV untuk Metode Utama vs TOPSIS vs CVSS Saja.
+    dan Average Rank KEV membandingkan 4 model komparatif:
+      a) Skenario 1 (CVSS Saja - Baseline)
+      b) Skenario 2 (CVSS + EPSS)
+      c) Skenario 3 (CVSS + EPSS + KEV - Metode Utama Weighted+Rule)
+      d) Skenario 3 (CVSS + EPSS + KEV - MCDM TOPSIS)
     """
-    sim_data = _simulate_run(vuln_data, scenario, weight_config)
     total_kev = sum(1 for v in vuln_data if v.get("is_kev", 0) == 1)
 
-    sorted_w = sorted(sim_data, key=lambda x: x["final_rank_weighted"])
-    sorted_t = sorted(sim_data, key=lambda x: x["final_rank_topsis"])
-    sorted_c = sorted(sim_data, key=lambda x: x["cvss_v3_score"], reverse=True)
+    # 4 Model Simulasi
+    sim_s1 = _simulate_run(vuln_data, scenario=1, weight_config=weight_config)
+    sim_s2 = _simulate_run(vuln_data, scenario=2, weight_config=weight_config)
+    sim_s3 = _simulate_run(vuln_data, scenario=3, weight_config=weight_config)
 
-    # NDCG
-    ndcg10_w = _compute_ndcg_at_k(sorted_w, 10)
-    ndcg20_w = _compute_ndcg_at_k(sorted_w, 20)
-    ndcg50_w = _compute_ndcg_at_k(sorted_w, 50)
-
-    ndcg10_t = _compute_ndcg_at_k(sorted_t, 10)
-    ndcg20_t = _compute_ndcg_at_k(sorted_t, 20)
-    ndcg50_t = _compute_ndcg_at_k(sorted_t, 50)
-
-    ndcg10_c = _compute_ndcg_at_k(sorted_c, 10)
-    ndcg20_c = _compute_ndcg_at_k(sorted_c, 20)
-    ndcg50_c = _compute_ndcg_at_k(sorted_c, 50)
+    sorted_s1 = sorted(sim_s1, key=lambda x: x["final_rank_weighted"])
+    sorted_s2 = sorted(sim_s2, key=lambda x: x["final_rank_weighted"])
+    sorted_s3_w = sorted(sim_s3, key=lambda x: x["final_rank_weighted"])
+    sorted_s3_t = sorted(sim_s3, key=lambda x: x["final_rank_topsis"])
 
     # MRR (Mean Reciprocal Rank dari KEV pertama)
     def calc_mrr(items):
@@ -410,30 +452,72 @@ def evaluate_ranking_quality(vuln_data, scenario=3, weight_config=1):
                 return round(1.0 / rank, 4)
         return 0.0
 
-    mrr_w = calc_mrr(sorted_w)
-    mrr_t = calc_mrr(sorted_t)
-    mrr_c = calc_mrr(sorted_c)
-
     # Average Rank KEV
     def calc_avg_rank(items):
         ranks = [rank for rank, item in enumerate(items, start=1) if item.get("is_kev", 0) == 1]
         return round(float(np.mean(ranks)), 2) if ranks else 0.0
 
-    avg_rank_w = calc_avg_rank(sorted_w)
-    avg_rank_t = calc_avg_rank(sorted_t)
-    avg_rank_c = calc_avg_rank(sorted_c)
-
     metrics = [
-        {"metric": "NDCG@10", "weighted": ndcg10_w, "topsis": ndcg10_t, "cvss_only": ndcg10_c, "interpretation": "Kualitas perangkingan ideal 10 teratas (0-1)"},
-        {"metric": "NDCG@20", "weighted": ndcg20_w, "topsis": ndcg20_t, "cvss_only": ndcg20_c, "interpretation": "Kualitas perangkingan ideal 20 teratas (0-1)"},
-        {"metric": "NDCG@50", "weighted": ndcg50_w, "topsis": ndcg50_t, "cvss_only": ndcg50_c, "interpretation": "Kualitas perangkingan ideal 50 teratas (0-1)"},
-        {"metric": "MRR (Mean Reciprocal Rank)", "weighted": mrr_w, "topsis": mrr_t, "cvss_only": mrr_c, "interpretation": "Kecepatan penemuan KEV pertama (1.0 = Rank 1)"},
-        {"metric": "Average KEV Rank", "weighted": avg_rank_w, "topsis": avg_rank_t, "cvss_only": avg_rank_c, "interpretation": "Rata-rata posisi rank KEV (semakin kecil semakin baik)"},
+        {
+            "metric": "NDCG@10",
+            "s1_cvss": _compute_ndcg_at_k(sorted_s1, 10),
+            "s2_epss": _compute_ndcg_at_k(sorted_s2, 10),
+            "s3_weighted": _compute_ndcg_at_k(sorted_s3_w, 10),
+            "s3_topsis": _compute_ndcg_at_k(sorted_s3_t, 10),
+            "cvss_only": _compute_ndcg_at_k(sorted_s1, 10), # Alias
+            "weighted": _compute_ndcg_at_k(sorted_s3_w, 10), # Alias
+            "topsis": _compute_ndcg_at_k(sorted_s3_t, 10), # Alias
+            "interpretation": "Kualitas perangkingan ideal 10 teratas (0-1)"
+        },
+        {
+            "metric": "NDCG@20",
+            "s1_cvss": _compute_ndcg_at_k(sorted_s1, 20),
+            "s2_epss": _compute_ndcg_at_k(sorted_s2, 20),
+            "s3_weighted": _compute_ndcg_at_k(sorted_s3_w, 20),
+            "s3_topsis": _compute_ndcg_at_k(sorted_s3_t, 20),
+            "cvss_only": _compute_ndcg_at_k(sorted_s1, 20),
+            "weighted": _compute_ndcg_at_k(sorted_s3_w, 20),
+            "topsis": _compute_ndcg_at_k(sorted_s3_t, 20),
+            "interpretation": "Kualitas perangkingan ideal 20 teratas (0-1)"
+        },
+        {
+            "metric": "NDCG@50",
+            "s1_cvss": _compute_ndcg_at_k(sorted_s1, 50),
+            "s2_epss": _compute_ndcg_at_k(sorted_s2, 50),
+            "s3_weighted": _compute_ndcg_at_k(sorted_s3_w, 50),
+            "s3_topsis": _compute_ndcg_at_k(sorted_s3_t, 50),
+            "cvss_only": _compute_ndcg_at_k(sorted_s1, 50),
+            "weighted": _compute_ndcg_at_k(sorted_s3_w, 50),
+            "topsis": _compute_ndcg_at_k(sorted_s3_t, 50),
+            "interpretation": "Kualitas perangkingan ideal 50 teratas (0-1)"
+        },
+        {
+            "metric": "MRR (Mean Reciprocal Rank)",
+            "s1_cvss": calc_mrr(sorted_s1),
+            "s2_epss": calc_mrr(sorted_s2),
+            "s3_weighted": calc_mrr(sorted_s3_w),
+            "s3_topsis": calc_mrr(sorted_s3_t),
+            "cvss_only": calc_mrr(sorted_s1),
+            "weighted": calc_mrr(sorted_s3_w),
+            "topsis": calc_mrr(sorted_s3_t),
+            "interpretation": "Kecepatan penemuan KEV pertama (1.0 = Rank 1)"
+        },
+        {
+            "metric": "Average KEV Rank",
+            "s1_cvss": calc_avg_rank(sorted_s1),
+            "s2_epss": calc_avg_rank(sorted_s2),
+            "s3_weighted": calc_avg_rank(sorted_s3_w),
+            "s3_topsis": calc_avg_rank(sorted_s3_t),
+            "cvss_only": calc_avg_rank(sorted_s1),
+            "weighted": calc_avg_rank(sorted_s3_w),
+            "topsis": calc_avg_rank(sorted_s3_t),
+            "interpretation": "Rata-rata posisi rank KEV (semakin kecil semakin baik)"
+        },
     ]
 
     return {
         "test_name": "Ranking Quality Testing",
-        "description": "Evaluasi komprehensif kualitas peringkat menggunakan Information Retrieval Metrics (NDCG, MRR, dan Average Rank).",
+        "description": "Perbandingan komprehensif 4 model: Evaluasi kualitas peringkat menggunakan Information Retrieval Metrics (NDCG, MRR, dan Average Rank).",
         "total_kev": total_kev,
         "metrics": metrics
     }

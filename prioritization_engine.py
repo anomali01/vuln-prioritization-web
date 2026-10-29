@@ -23,9 +23,9 @@ logger = logging.getLogger(__name__)
 
 # Bobot dasar untuk setiap konfigurasi (CVSS : EPSS : KEV)
 WEIGHT_CONFIGS = {
-    1: {"cvss": 0.5, "epss": 0.3, "kev": 0.2},   # Config 1: 50:30:20
-    2: {"cvss": 0.3, "epss": 0.4, "kev": 0.3},   # Config 2: 30:40:30
-    3: {"cvss": 0.2, "epss": 0.4, "kev": 0.4},   # Config 3: 20:40:40
+    1: {"cvss": 0.5, "epss": 0.3, "kev": 0.2},   # Config 1: 50:30:20 - Fokus Keparahan Teknis (Severity-Focused)
+    2: {"cvss": 0.3, "epss": 0.4, "kev": 0.3},   # Config 2: 30:40:30 - Seimbang / Fokus Probabilitas (Balanced)
+    3: {"cvss": 0.2, "epss": 0.4, "kev": 0.4},   # Config 3: 20:40:40 - Fokus Ancaman Aktif (Threat-Focused)
 }
 
 # Faktor aktif berdasarkan skenario
@@ -148,26 +148,30 @@ def _compute_weighted_score(vuln, weights):
     return score * 100
 
 
-def _apply_rule_based_enhancement(weighted_score, is_kev):
+def _apply_rule_based_enhancement(weighted_score, is_kev, scenario=3):
     """
     Menerapkan rule-based enhancement untuk memastikan kerentanan KEV
-    selalu mendapat eskalasi ke kategori Critical.
+    selalu mendapat eskalasi ke kategori Critical secara monotonik
+    (mencegah rank inversion antar-kerentanan KEV).
     
-    Aturan: Jika is_kev == 1 DAN weighted_score < 85, maka:
-        rule_based_score = max(85, weighted_score + 20), capped at 100.
-    Ini memastikan semua KEV CVE berada di kategori Critical,
-    terlepas dari penurunan skor EPSS seiring waktu (EPSS decay).
+    Aturan ini HANYA aktif pada Skenario 3 (CVSS + EPSS + KEV):
+        Jika scenario == 3 dan is_kev == 1:
+            rule_based_score = round(min(100.0, max(weighted_score, 85.0 + (weighted_score / 100.0) * 15.0)), 2)
+            
+    Pada Skenario 1 (CVSS saja) dan Skenario 2 (CVSS + EPSS):
+        rule_based_score = weighted_score (mencegah data leakage saat Ablation Testing).
     
     Args:
         weighted_score (float): Skor terbobot awal (0-100).
         is_kev (int): Flag KEV (0 atau 1).
+        scenario (int): Nomor skenario (1, 2, atau 3). Default 3.
     
     Returns:
-        float: Skor setelah penerapan aturan (0-100).
+        float: Skor setelah penerapan aturan eskalasi monotonik (0-100).
     """
-    if is_kev == 1 and weighted_score < 85:
-        return min(100.0, max(85.0, weighted_score + 20))
-    return weighted_score
+    if scenario == 3 and is_kev == 1:
+        return round(min(100.0, max(weighted_score, 85.0 + (weighted_score / 100.0) * 15.0)), 2)
+    return round(weighted_score, 4)
 
 
 # ============================================================================
@@ -413,8 +417,8 @@ def run_prioritization(vuln_data_list, scenario, weight_config):
         # Weighted score
         weighted_score = _compute_weighted_score(vuln, weights)
 
-        # Rule-based enhancement
-        rule_based_score = _apply_rule_based_enhancement(weighted_score, kev_flag)
+        # Rule-based enhancement (aktif pada Skenario 3 jika is_kev == 1)
+        rule_based_score = _apply_rule_based_enhancement(weighted_score, kev_flag, scenario)
 
         results.append({
             "cve_id": vuln["cve_id"],
