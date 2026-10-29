@@ -10,6 +10,8 @@ import io
 import csv
 import time
 import logging
+import traceback
+import os
 from flask import Flask, render_template, request, jsonify, send_file, Response
 from config import Config
 from db import get_connection, execute_query
@@ -25,15 +27,39 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-app = Flask(__name__)
+base_dir = os.path.dirname(os.path.abspath(__file__))
+template_dir = os.path.join(base_dir, "templates")
+static_dir = os.path.join(base_dir, "static")
+
+app = Flask(__name__, template_folder=template_dir, static_folder=static_dir)
 app.config.from_object(Config)
 app.secret_key = Config.SECRET_KEY
+
+
+@app.errorhandler(Exception)
+def handle_unhandled_exception(e):
+    logger.error("Unhandled Exception: %s", traceback.format_exc())
+    return jsonify({
+        "status": "error",
+        "error_type": type(e).__name__,
+        "error_message": str(e),
+        "traceback": traceback.format_exc()
+    }), 500
 
 
 @app.route("/")
 def index():
     """Halaman Dashboard Utama (SPA)."""
-    return render_template("index.html")
+    try:
+        return render_template("index.html")
+    except Exception as e:
+        logger.error("Template rendering error: %s", traceback.format_exc())
+        return jsonify({
+            "status": "error",
+            "message": "Template rendering error",
+            "error": str(e),
+            "traceback": traceback.format_exc()
+        }), 500
 
 
 @app.route("/api/health", methods=["GET"])

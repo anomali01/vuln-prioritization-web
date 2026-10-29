@@ -18,8 +18,6 @@ import math
 import time
 import logging
 from datetime import datetime, timedelta
-import numpy as np
-from scipy import stats
 
 from prioritization_engine import (
     _get_effective_weights,
@@ -65,6 +63,30 @@ def _compute_ndcg_at_k(ranked_items, k, relevance_key="is_kev"):
         return 1.0 if dcg == 0.0 else 0.0
 
     return round(dcg / idcg, 4)
+
+
+def _compute_spearman_r(x, y):
+    """
+    Menghitung koefisien korelasi peringkat Spearman (rho) dan p-value
+    secara deterministik tanpa dependensi eksternal scipy/pandas,
+    sehingga performa ringan dan kompatibel penuh pada environment serverless Vercel.
+    """
+    n = len(x)
+    if n <= 1:
+        return 1.0, 1.0
+    
+    d_sq_sum = sum((float(xi) - float(yi)) ** 2 for xi, yi in zip(x, y))
+    rho = 1.0 - (6.0 * d_sq_sum) / (n * (n ** 2 - 1))
+    rho = max(-1.0, min(1.0, rho))
+    
+    if abs(rho) >= 1.0:
+        p_val = 0.0
+    else:
+        df = n - 2
+        t_stat = rho * math.sqrt(df / (1.0 - rho ** 2))
+        p_val = math.erfc(abs(t_stat) / math.sqrt(2.0))
+    
+    return float(round(rho, 4)), float(p_val)
 
 
 def _simulate_run(vuln_data, scenario, weight_config):
@@ -155,8 +177,8 @@ def evaluate_baseline_ranking(vuln_data, scenario=3, weight_config=1):
     comparisons.sort(key=lambda x: x["rank_weighted"])
 
     total = len(comparisons)
-    mean_disp = round(float(np.mean(displacements)), 2) if total > 0 else 0.0
-    max_disp = int(np.max(displacements)) if total > 0 else 0
+    mean_disp = round(float(sum(displacements) / total), 2) if total > 0 else 0.0
+    max_disp = int(max(displacements)) if total > 0 else 0
     
     # Overlap top-K
     top10_w = {x["cve_id"] for x in comparisons[:10]}
@@ -473,7 +495,7 @@ def evaluate_ranking_quality(vuln_data, scenario=3, weight_config=1):
     # Average Rank KEV
     def calc_avg_rank(items):
         ranks = [rank for rank, item in enumerate(items, start=1) if item.get("is_kev", 0) == 1]
-        return round(float(np.mean(ranks)), 2) if ranks else 0.0
+        return round(float(sum(ranks) / len(ranks)), 2) if ranks else 0.0
 
     metrics = [
         {
@@ -567,7 +589,7 @@ def evaluate_ablation(vuln_data, weight_config=1):
         ndcg20 = _compute_ndcg_at_k(sorted_w, 20)
         
         ranks = [r for r, item in enumerate(sorted_w, 1) if item["is_kev"] == 1]
-        avg_rank = round(float(np.mean(ranks)), 2) if ranks else 0.0
+        avg_rank = round(float(sum(ranks) / len(ranks)), 2) if ranks else 0.0
 
         sc_name = "Skenario 1 (CVSS)" if sc == 1 else ("Skenario 2 (CVSS+EPSS)" if sc == 2 else "Skenario 3 (CVSS+EPSS+KEV)")
         
@@ -621,9 +643,9 @@ def evaluate_sensitivity(vuln_data, scenario=3):
     arr_c3 = [ranks_c3[c] for c in cve_list]
 
     # Spearman correlation antar konfigurasi
-    rho_12, _ = stats.spearmanr(arr_c1, arr_c2)
-    rho_13, _ = stats.spearmanr(arr_c1, arr_c3)
-    rho_23, _ = stats.spearmanr(arr_c2, arr_c3)
+    rho_12, _ = _compute_spearman_r(arr_c1, arr_c2)
+    rho_13, _ = _compute_spearman_r(arr_c1, arr_c3)
+    rho_23, _ = _compute_spearman_r(arr_c2, arr_c3)
 
     cve_comparisons = []
     for c in cve_list[:25]:  # Ambil sampel 25 CVE untuk tabel detail
@@ -667,7 +689,7 @@ def evaluate_priority_consistency(vuln_data, scenario=3, weight_config=1):
     ranks_w = [x["final_rank_weighted"] for x in sim_data]
     ranks_t = [x["final_rank_topsis"] for x in sim_data]
 
-    rho, p_value = stats.spearmanr(ranks_w, ranks_t)
+    rho, p_value = _compute_spearman_r(ranks_w, ranks_t)
     rho = float(rho)
     p_value = float(p_value)
 
